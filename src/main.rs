@@ -6,7 +6,7 @@ use ratatui::{
     style::Stylize,
     symbols::border,
     text::{Line, Text},
-    widgets::{Block, Paragraph, Widget, WidgetRef},
+    widgets::{Block, Paragraph, Widget},
 };
 use std::io;
 
@@ -16,8 +16,8 @@ enum PageSignal {
 }
 
 struct Page {
-    widget: Box<dyn WidgetRef>,
-    event_callback: Box<dyn Fn() -> Option<PageSignal>>,
+    render: &'static dyn Fn(Rect, &mut Buffer),
+    event_callback: &'static dyn Fn() -> Option<PageSignal>,
 }
 
 struct App {
@@ -37,7 +37,7 @@ impl App {
 
     fn draw(&self, frame: &mut Frame) {
         if let Some(page) = self.stack.last() {
-            page.widget.render_ref(frame.area(), frame.buffer_mut());
+            (page.render)(frame.area(), frame.buffer_mut());
         }
     }
 }
