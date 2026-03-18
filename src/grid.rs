@@ -4,21 +4,23 @@ use ratatui::{
     layout::{Constraint, Layout, Rect},
     style::Stylize,
     symbols::border,
-    widgets::{Block, Paragraph, Widget},
+    widgets::{Block, Paragraph, Widget, WidgetRef},
 };
 
 pub struct Grid {
     cols: usize,
     rows: usize,
     highlighted: usize,
+    widgets: Vec<Box<dyn Fn(Rect, &mut Buffer)>>,
 }
 
 impl Grid {
-    pub fn new(rows: usize, cols: usize) -> Self {
+    pub fn new(rows: usize, cols: usize, widgets: Vec<Box<dyn Fn(Rect, &mut Buffer)>>) -> Self {
         Self {
             cols,
             rows,
             highlighted: 0,
+            widgets,
         }
     }
 }
@@ -40,9 +42,8 @@ impl Widget for Grid {
                 Block::bordered().border_set(border::ROUNDED).white()
             };
 
-            Paragraph::new(format!("Area {:02}", i + 1))
-                .block(block)
-                .render(cell, buf);
+            self.widgets[i](block.inner(cell), buf);
+            block.render(cell, buf);
         }
     }
 }

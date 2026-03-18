@@ -60,7 +60,18 @@ impl App {
     }
 
     fn render(area: Rect, buf: &mut Buffer) {
-        let grid = Grid::new(3, 2);
+        let grid = Grid::new(
+            2,
+            1,
+            vec![
+                Box::new(|r, b| {
+                    Text::from("Hello").render(r, b);
+                }),
+                Box::new(|r, b| {
+                    Text::from("World!").render(r, b);
+                }),
+            ],
+        );
         let layout = Layout::default()
             .direction(Direction::Horizontal)
             .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
