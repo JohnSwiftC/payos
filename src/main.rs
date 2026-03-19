@@ -21,7 +21,7 @@ enum PageSignal {
 
 struct Page {
     render: fn(Rect, &mut Buffer),
-    event_callback: fn(&mut Self, Event) -> Option<PageSignal>,
+    event_callback: fn(Event, &mut App) -> Option<PageSignal>,
 }
 
 struct App {
@@ -48,7 +48,7 @@ impl App {
     fn draw(&self, frame: &mut Frame) {
         let block = Block::bordered()
             .border_set(border::DOUBLE)
-            .title(Line::from(" Sunrise V Landline ".bold().yellow()));
+            .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered());
 
         if let Some(page) = self.stack.last() {
             (page.render)(block.inner(frame.area()), frame.buffer_mut());
@@ -82,6 +82,21 @@ impl App {
 
     fn prop_input(&mut self) {
         let event = event::read().expect("Failed to read a key event, awesome!");
+
+        let signal = if let Some(page) = self.stack.last() {
+            (page.event_callback)(event, self)
+        } else {
+            self.event_callback(event)
+        };
+
+        if let Some(signal) = signal {
+            match signal {
+                PageSignal::Push(p) => self.stack.push(p),
+                PageSignal::Back => {
+                    let _ = self.stack.pop();
+                }
+            }
+        }
     }
 
     fn event_callback(&mut self, event: Event) -> Option<PageSignal> {
