@@ -20,14 +20,15 @@ enum PageSignal {
 }
 
 struct Page {
-    render: fn(Rect, &mut Buffer),
-    event_callback: fn(Event, &mut App) -> Option<PageSignal>,
+    render: fn(&App, Rect, &mut Buffer),
+    event_callback: fn(&mut App, Event) -> Option<PageSignal>,
 }
 
 struct App {
     stack: Vec<Page>,
     rows: usize,
     cols: usize,
+    highlighted: usize,
 }
 
 impl App {
@@ -36,12 +37,14 @@ impl App {
             stack: Vec::new(),
             rows,
             cols,
+            highlighted: 0,
         }
     }
 
     fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         loop {
             terminal.draw(|frame| self.draw(frame))?;
+            self.prop_input();
         }
     }
 
@@ -51,18 +54,19 @@ impl App {
             .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered());
 
         if let Some(page) = self.stack.last() {
-            (page.render)(block.inner(frame.area()), frame.buffer_mut());
+            (page.render)(self, block.inner(frame.area()), frame.buffer_mut());
         } else {
-            Self::render(block.inner(frame.area()), frame.buffer_mut());
+            self.render(block.inner(frame.area()), frame.buffer_mut());
         }
 
         block.render(frame.area(), frame.buffer_mut());
     }
 
-    fn render(area: Rect, buf: &mut Buffer) {
+    fn render(&self, area: Rect, buf: &mut Buffer) {
         let grid = Grid::new(
             2,
             1,
+            self.highlighted,
             vec![
                 Box::new(|r, b| {
                     Text::from("Hello").render(r, b);
@@ -84,7 +88,7 @@ impl App {
         let event = event::read().expect("Failed to read a key event, awesome!");
 
         let signal = if let Some(page) = self.stack.last() {
-            (page.event_callback)(event, self)
+            (page.event_callback)(self, event)
         } else {
             self.event_callback(event)
         };

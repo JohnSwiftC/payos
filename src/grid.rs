@@ -15,11 +15,16 @@ pub struct Grid {
 }
 
 impl Grid {
-    pub fn new(rows: usize, cols: usize, widgets: Vec<Box<dyn Fn(Rect, &mut Buffer)>>) -> Self {
+    pub fn new(
+        rows: usize,
+        cols: usize,
+        highlighted: usize,
+        widgets: Vec<Box<dyn Fn(Rect, &mut Buffer)>>,
+    ) -> Self {
         Self {
             cols,
             rows,
-            highlighted: 0,
+            highlighted,
             widgets,
         }
     }
