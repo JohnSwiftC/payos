@@ -7,7 +7,7 @@ use ratatui::{
     widgets::{Block, Paragraph, Widget, WidgetRef},
 };
 
-pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
+use crate::WidgetList;
 
 pub struct Grid {
     cols: usize,

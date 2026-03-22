@@ -1,4 +1,5 @@
 mod grid;
+mod richbutton;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
@@ -13,6 +14,9 @@ use ratatui::{
 use std::io;
 
 use crate::grid::Grid;
+
+pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
+pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
 
 enum PageSignal {
     Back,
