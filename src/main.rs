@@ -51,7 +51,10 @@ impl App {
     fn draw(&self, frame: &mut Frame) {
         let block = Block::bordered()
             .border_set(border::DOUBLE)
-            .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered());
+            .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered())
+            .title_bottom(
+                Line::from(vec![" Exit Page With ".blue(), "<*> ".blue().bold()]).centered(),
+            );
 
         if let Some(page) = self.stack.last() {
             (page.render)(self, block.inner(frame.area()), frame.buffer_mut());
@@ -64,8 +67,8 @@ impl App {
 
     fn render(&self, area: Rect, buf: &mut Buffer) {
         let grid = Grid::new(
-            2,
-            1,
+            self.rows,
+            self.cols,
             self.highlighted,
             vec![
                 Box::new(|r, b| {
@@ -104,12 +107,46 @@ impl App {
     }
 
     fn event_callback(&mut self, event: Event) -> Option<PageSignal> {
+        let key = match event {
+            Event::Key(key) if key.kind == KeyEventKind::Press => key,
+            _ => {
+                return None;
+            }
+        };
+
+        let max_index = self.rows * self.cols - 1;
+        match key.code {
+            KeyCode::Down => {
+                self.highlighted = max_index.min(self.highlighted + self.cols);
+            }
+
+            KeyCode::Up => {
+                if self.cols > self.highlighted {
+                    self.highlighted = 0;
+                } else {
+                    self.highlighted -= self.cols;
+                }
+            }
+
+            KeyCode::Right => {
+                self.highlighted = max_index.min(self.highlighted + 1);
+            }
+
+            KeyCode::Left => {
+                if self.highlighted != 0 {
+                    self.highlighted -= 1;
+                }
+            }
+
+            _ => (),
+        }
+
         None
     }
 }
 
 fn main() -> io::Result<()> {
-    let mut app = App::new(3, 2);
+    let mut app = App::new(2, 1);
     ratatui::run(|terminal| app.run(terminal))?;
 
     Ok(())

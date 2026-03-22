@@ -7,20 +7,17 @@ use ratatui::{
     widgets::{Block, Paragraph, Widget, WidgetRef},
 };
 
+pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
+
 pub struct Grid {
     cols: usize,
     rows: usize,
     highlighted: usize,
-    widgets: Vec<Box<dyn Fn(Rect, &mut Buffer)>>,
+    widgets: WidgetList,
 }
 
 impl Grid {
-    pub fn new(
-        rows: usize,
-        cols: usize,
-        highlighted: usize,
-        widgets: Vec<Box<dyn Fn(Rect, &mut Buffer)>>,
-    ) -> Self {
+    pub fn new(rows: usize, cols: usize, highlighted: usize, widgets: WidgetList) -> Self {
         Self {
             cols,
             rows,
