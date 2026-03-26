@@ -13,22 +13,18 @@ pub struct Grid {
     cols: usize,
     rows: usize,
     highlighted: usize,
-    widgets: WidgetList,
 }
 
 impl Grid {
-    pub fn new(rows: usize, cols: usize, highlighted: usize, widgets: WidgetList) -> Self {
+    pub fn new(rows: usize, cols: usize, highlighted: usize) -> Self {
         Self {
             cols,
             rows,
             highlighted,
-            widgets,
         }
     }
-}
 
-impl Widget for Grid {
-    fn render(self, area: Rect, buf: &mut Buffer) {
+    pub fn render(self, area: Rect, buf: &mut Buffer, widgets: &WidgetList) {
         let col_constraints = (0..self.cols).map(|_| Constraint::Ratio(1, self.cols as u32));
         let row_constraints = (0..self.rows).map(|_| Constraint::Ratio(1, self.rows as u32));
         let horizontal = Layout::horizontal(col_constraints);
@@ -44,7 +40,7 @@ impl Widget for Grid {
                 Block::bordered().border_set(border::ROUNDED).white()
             };
 
-            self.widgets[i](block.inner(cell), buf);
+            widgets[i](block.inner(cell), buf);
             block.render(cell, buf);
         }
     }

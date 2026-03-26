@@ -33,15 +33,17 @@ struct App {
     rows: usize,
     cols: usize,
     highlighted: usize,
+    widgets: Vec<WidgetFn>,
 }
 
 impl App {
-    fn new(rows: usize, cols: usize) -> Self {
+    fn new(rows: usize, cols: usize, widgets: Vec<WidgetFn>) -> Self {
         Self {
             stack: Vec::new(),
             rows,
             cols,
             highlighted: 0,
+            widgets,
         }
     }
 
@@ -70,25 +72,13 @@ impl App {
     }
 
     fn render(&self, area: Rect, buf: &mut Buffer) {
-        let grid = Grid::new(
-            self.rows,
-            self.cols,
-            self.highlighted,
-            vec![
-                Box::new(|r, b| {
-                    Text::from("Hello").render(r, b);
-                }),
-                Box::new(|r, b| {
-                    Text::from("World!").render(r, b);
-                }),
-            ],
-        );
+        let grid = Grid::new(self.rows, self.cols, self.highlighted);
         let layout = Layout::default()
             .direction(Direction::Horizontal)
             .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
             .split(area);
 
-        grid.render(layout[0], buf);
+        grid.render(layout[0], buf, &self.widgets);
     }
 
     fn prop_input(&mut self) {
@@ -150,7 +140,12 @@ impl App {
 }
 
 fn main() -> io::Result<()> {
-    let mut app = App::new(2, 1);
+    let mut buttons = Vec::new();
+
+    buttons.push(richbutton::action_button("Hello", "This is a test"));
+    buttons.push(richbutton::action_button("Hello 2", "This is another test"));
+
+    let mut app = App::new(2, 1, buttons);
     ratatui::run(|terminal| app.run(terminal))?;
 
     Ok(())

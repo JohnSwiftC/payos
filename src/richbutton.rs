@@ -1,7 +1,7 @@
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
-layout::{Constraint, Direction, Layout, Rect},
+    layout::{Constraint, Direction, Layout, Rect},
     style::Stylize,
     symbols::border,
     text::{Line, Text},
@@ -10,10 +10,8 @@ layout::{Constraint, Direction, Layout, Rect},
 
 use crate::WidgetFn;
 
-pub fn action_button(title: &'static str, desc: &'static str) -> WidgetFn  {
+pub fn action_button(title: &'static str, desc: &'static str) -> WidgetFn {
     Box::new(|r, b| {
-
-
         let layout = Layout::default()
             .direction(Direction::Vertical)
             .constraints(vec![Constraint::Percentage(30), Constraint::Percentage(70)])
@@ -26,5 +24,5 @@ pub fn action_button(title: &'static str, desc: &'static str) -> WidgetFn  {
         let desc = Text::from(desc.italic()).centered();
 
         desc.render(layout[1], b);
-    })    
+    })
 }
