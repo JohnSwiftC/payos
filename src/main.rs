@@ -1,5 +1,6 @@
 mod grid;
 mod richbutton;
+mod secret;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
@@ -18,14 +19,14 @@ use crate::grid::Grid;
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
 pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
 
-enum PageSignal {
+pub enum PageSignal {
     Back,
     Push(Page),
 }
 
-struct Page {
-    render: fn(&App, Rect, &mut Buffer),
-    event_callback: fn(&mut App, Event) -> Option<PageSignal>,
+pub struct Page {
+    pub render: fn(&App, Rect, &mut Buffer),
+    pub event_callback: fn(&mut App, Event) -> Option<PageSignal>,
 }
 
 struct App {
@@ -132,6 +133,11 @@ impl App {
                 }
             }
 
+            KeyCode::Enter => match self.highlighted {
+                0 => return Some(PageSignal::Push(secret::secret_page())),
+                _ => (),
+            },
+
             _ => (),
         }
 
@@ -142,7 +148,10 @@ impl App {
 fn main() -> io::Result<()> {
     let mut buttons = Vec::new();
 
-    buttons.push(richbutton::action_button("Hello", "This is a test"));
+    buttons.push(richbutton::action_button(
+        "Super Secret Menu",
+        "Requires Leo's password!",
+    ));
     buttons.push(richbutton::action_button("Hello 2", "This is another test"));
 
     let mut app = App::new(2, 1, buttons);
