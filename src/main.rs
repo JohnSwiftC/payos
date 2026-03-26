@@ -38,13 +38,16 @@ struct App {
 }
 
 impl App {
-    fn new(rows: usize, cols: usize, widgets: Vec<WidgetFn>) -> Self {
+    fn default() -> Self {
         Self {
             stack: Vec::new(),
-            rows,
-            cols,
+            rows: 2,
+            cols: 1,
             highlighted: 0,
-            widgets,
+            widgets: vec![
+                richbutton::action_button("Secret Login", "Requires a password"),
+                richbutton::action_button("Some Random Thing", "Does this thing"),
+            ],
         }
     }
 
@@ -146,15 +149,7 @@ impl App {
 }
 
 fn main() -> io::Result<()> {
-    let mut buttons = Vec::new();
-
-    buttons.push(richbutton::action_button(
-        "Super Secret Menu",
-        "Requires Leo's password!",
-    ));
-    buttons.push(richbutton::action_button("Hello 2", "This is another test"));
-
-    let mut app = App::new(2, 1, buttons);
+    let mut app = App::default();
     ratatui::run(|terminal| app.run(terminal))?;
 
     Ok(())
