@@ -14,12 +14,15 @@ use ratatui::{
     text::{Line, Text},
     widgets::{Block, Paragraph, Widget},
 };
-use ratatui_image::{picker::Picker, protocol::Protocol};
+use ratatui_image::{
+    picker::Picker,
+    protocol::{Protocol, StatefulProtocol},
+};
 use std::io;
 use std::process;
 
-use crate::code::Code;
 use crate::grid::Grid;
+use crate::{code::Code, secret::cat};
 
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
 pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
@@ -30,7 +33,7 @@ pub enum PageSignal {
 }
 
 pub struct Page {
-    pub render: fn(&App, Rect, &mut Buffer),
+    pub render: fn(&mut App, Rect, &mut Buffer),
     pub event_callback: fn(&mut App, Event) -> Option<PageSignal>,
 }
 
@@ -43,10 +46,17 @@ struct App {
     code: Code,
     cat_image: DynamicImage,
     picker: Picker,
+    image_protocol: StatefulProtocol,
 }
 
 impl App {
     fn default() -> Self {
+        let cat_image = image::ImageReader::open("cat.jpg")
+            .unwrap()
+            .decode()
+            .unwrap();
+        let picker = Picker::from_query_stdio().unwrap();
+        let image_protocol = picker.new_resize_protocol(cat_image.clone());
         Self {
             stack: Vec::new(),
             rows: 2,
@@ -57,11 +67,9 @@ impl App {
                 richbutton::action_button("Some Random Thing", "Does this thing"),
             ],
             code: Code::new("1234".into()),
-            cat_image: image::ImageReader::open("cat.jpg")
-                .unwrap()
-                .decode()
-                .unwrap(),
-            picker: Picker::from_query_stdio().unwrap(),
+            cat_image,
+            picker,
+            image_protocol,
         }
     }
 
@@ -72,7 +80,7 @@ impl App {
         }
     }
 
-    fn draw(&self, frame: &mut Frame) {
+    fn draw(&mut self, frame: &mut Frame) {
         let block = Block::bordered()
             .border_set(border::DOUBLE)
             .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered())

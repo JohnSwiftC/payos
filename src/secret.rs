@@ -16,7 +16,7 @@ use crate::App;
 use crate::WidgetFn;
 use crate::{Page, PageSignal};
 
-pub fn render(app: &App, area: Rect, buf: &mut Buffer) {
+pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
     app.code.render(area, buf);
 }
 
