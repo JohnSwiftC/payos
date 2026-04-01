@@ -13,6 +13,7 @@ use ratatui::{
     widgets::{Block, Paragraph, Widget},
 };
 use std::io;
+use std::process;
 
 use crate::grid::Grid;
 
@@ -35,6 +36,7 @@ struct App {
     cols: usize,
     highlighted: usize,
     widgets: Vec<WidgetFn>,
+    code_buf: [u8; 4],
 }
 
 impl App {
@@ -48,6 +50,7 @@ impl App {
                 richbutton::action_button("Secret Login", "Requires a password"),
                 richbutton::action_button("Some Random Thing", "Does this thing"),
             ],
+            code_buf: [0; 4],
         }
     }
 
@@ -140,6 +143,8 @@ impl App {
                 0 => return Some(PageSignal::Push(secret::secret_page())),
                 _ => (),
             },
+
+            KeyCode::Char('*') => process::exit(0),
 
             _ => (),
         }
