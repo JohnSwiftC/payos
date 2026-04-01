@@ -93,6 +93,21 @@ impl App {
     fn prop_input(&mut self) {
         let event = event::read().expect("Failed to read a key event, awesome!");
 
+        // * globally pops a page
+        if let Event::Key(KeyEvent {
+            code: KeyCode::Char('*'),
+            kind: KeyEventKind::Press,
+            ..
+        }) = event
+        {
+            if self.stack.pop().is_none() {
+                process::exit(0);
+            } else {
+                _ = self.stack.pop();
+                return;
+            }
+        }
+
         let signal = if let Some(page) = self.stack.last() {
             (page.event_callback)(self, event)
         } else {
@@ -103,7 +118,7 @@ impl App {
             match signal {
                 PageSignal::Push(p) => self.stack.push(p),
                 PageSignal::Back => {
-                    let _ = self.stack.pop();
+                    _ = self.stack.pop();
                 }
             }
         }
@@ -145,8 +160,6 @@ impl App {
                 0 => return Some(PageSignal::Push(secret::secret_page())),
                 _ => (),
             },
-
-            KeyCode::Char('*') => process::exit(0),
 
             _ => (),
         }
