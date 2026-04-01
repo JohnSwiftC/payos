@@ -1,10 +1,6 @@
 pub mod cat;
 
-use ratatui::{
-    buffer::Buffer,
-    layout::Rect,
-    widgets::Widget,
-};
+use ratatui::{buffer::Buffer, layout::Rect};
 
 use crossterm::event::{Event, KeyCode, KeyEventKind};
 

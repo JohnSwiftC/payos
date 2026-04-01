@@ -14,15 +14,12 @@ use ratatui::{
     text::Line,
     widgets::{Block, Widget},
 };
-use ratatui_image::{
-    picker::Picker,
-    protocol::StatefulProtocol,
-};
+use ratatui_image::{picker::Picker, protocol::StatefulProtocol};
 use std::io;
 use std::process;
 
-use crate::grid::Grid;
 use crate::code::Code;
+use crate::grid::Grid;
 
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
 pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
@@ -37,7 +34,7 @@ pub struct Page {
     pub event_callback: fn(&mut App, Event) -> Option<PageSignal>,
 }
 
-struct App {
+pub struct App {
     stack: Vec<Page>,
     rows: usize,
     cols: usize,
@@ -45,7 +42,6 @@ struct App {
     widgets: Vec<WidgetFn>,
     code: Code,
     cat_image: DynamicImage,
-    picker: Picker,
     image_protocol: StatefulProtocol,
 }
 
@@ -68,7 +64,6 @@ impl App {
             ],
             code: Code::new("1234".into()),
             cat_image,
-            picker,
             image_protocol,
         }
     }
@@ -173,7 +168,11 @@ impl App {
                 }
             }
 
-            KeyCode::Enter => if self.highlighted == 0 { return Some(PageSignal::Push(secret::page())) },
+            KeyCode::Enter => {
+                if self.highlighted == 0 {
+                    return Some(PageSignal::Push(secret::page()));
+                }
+            }
 
             _ => (),
         }
