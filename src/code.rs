@@ -56,7 +56,7 @@ impl Code {
 
     pub fn render(&self, area: Rect, buf: &mut Buffer) {
         let mut code_string = String::with_capacity(4);
-        for i in 0..self.index {
+        for i in 0..4 {
             if let Some(digit) = self.code[i] {
                 code_string.push(digit);
             } else {

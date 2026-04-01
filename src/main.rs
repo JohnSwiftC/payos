@@ -100,7 +100,7 @@ impl App {
             ..
         }) = event
         {
-            if self.stack.pop().is_none() {
+            if self.stack.len() == 0 {
                 process::exit(0);
             } else {
                 _ = self.stack.pop();
@@ -157,7 +157,7 @@ impl App {
             }
 
             KeyCode::Enter => match self.highlighted {
-                0 => return Some(PageSignal::Push(secret::secret_page())),
+                0 => return Some(PageSignal::Push(secret::page())),
                 _ => (),
             },
 

@@ -1,3 +1,5 @@
+pub mod cat;
+
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
@@ -8,26 +10,43 @@ use ratatui::{
     widgets::{Block, Paragraph, Widget},
 };
 
-use crossterm::event::Event;
+use crossterm::event::{Event, KeyCode, KeyEventKind};
 
 use crate::App;
 use crate::WidgetFn;
 use crate::{Page, PageSignal};
 
-pub fn secret_render(app: &App, area: Rect, buf: &mut Buffer) {
-    let t = Text::from("Test");
-
-    let p = Paragraph::new(t);
-    p.render(area, buf);
+pub fn render(app: &App, area: Rect, buf: &mut Buffer) {
+    app.code.render(area, buf);
 }
 
-pub fn secret_callback(app: &mut App, event: Event) -> Option<PageSignal> {
-    Some(PageSignal::Back)
+pub fn callback(app: &mut App, event: Event) -> Option<PageSignal> {
+    let key = match event {
+        Event::Key(key) if key.kind == KeyEventKind::Press => key,
+        _ => {
+            return None;
+        }
+    };
+
+    match key.code {
+        KeyCode::Backspace => app.code.pop(),
+
+        KeyCode::Enter => {
+            if app.code.is_correct() {
+                return Some(PageSignal::Push(cat::page()));
+            }
+        }
+
+        KeyCode::Char(c) => app.code.push(c),
+        _ => (),
+    }
+
+    None
 }
 
-pub fn secret_page() -> Page {
+pub fn page() -> Page {
     Page {
-        render: secret_render,
-        event_callback: secret_callback,
+        render: render,
+        event_callback: callback,
     }
 }
