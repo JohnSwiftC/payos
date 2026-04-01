@@ -4,6 +4,7 @@ mod richbutton;
 mod secret;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use image::DynamicImage;
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
@@ -13,6 +14,7 @@ use ratatui::{
     text::{Line, Text},
     widgets::{Block, Paragraph, Widget},
 };
+use ratatui_image::{picker::Picker, protocol::Protocol};
 use std::io;
 use std::process;
 
@@ -39,6 +41,8 @@ struct App {
     highlighted: usize,
     widgets: Vec<WidgetFn>,
     code: Code,
+    cat_image: DynamicImage,
+    picker: Picker,
 }
 
 impl App {
@@ -53,6 +57,11 @@ impl App {
                 richbutton::action_button("Some Random Thing", "Does this thing"),
             ],
             code: Code::new("1234".into()),
+            cat_image: image::ImageReader::open("cat.jpg")
+                .unwrap()
+                .decode()
+                .unwrap(),
+            picker: Picker::from_query_stdio().unwrap(),
         }
     }
 

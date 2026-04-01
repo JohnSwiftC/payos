@@ -8,16 +8,29 @@ use ratatui::{
     widgets::{Block, Paragraph, Widget},
 };
 
-use crossterm::event::{Event, KeyCode, KeyEventKind};
+use ratatui_image::{Image, picker::Picker, protocol::Protocol};
 
 use crate::App;
 use crate::WidgetFn;
 use crate::{Page, PageSignal};
+use crossterm::event::{Event, KeyCode, KeyEventKind};
+use image::imageops::FilterType;
 
 pub fn render(app: &App, area: Rect, buf: &mut Buffer) {
-    let text = Text::from("This is a cat");
+    let resized =
+        app.cat_image
+            .resize_exact(area.width.into(), area.height.into(), FilterType::Triangle);
+    let protocol = app
+        .picker
+        .new_protocol(
+            app.cat_image.clone(),
+            area,
+            ratatui_image::Resize::Fit(None),
+        )
+        .unwrap();
 
-    text.render(area, buf);
+    let cat_widget = Image::new(&protocol);
+    cat_widget.render(area, buf);
 }
 
 pub fn event_callback(app: &mut App, event: Event) -> Option<PageSignal> {
