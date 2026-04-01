@@ -1,11 +1,8 @@
 use ratatui::{
-    border,
     buffer::Buffer,
-    layout::{Constraint, Layout, Rect},
-    style::Stylize,
-    symbols::border,
+    layout::{Constraint, Rect},
     text::Text,
-    widgets::{Block, Paragraph, Widget, WidgetRef},
+    widgets::Widget,
 };
 
 pub struct Code {

@@ -1,11 +1,8 @@
 use ratatui::{
-    DefaultTerminal, Frame,
-    buffer::Buffer,
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::{Constraint, Direction, Layout},
     style::Stylize,
-    symbols::border,
-    text::{Line, Text},
-    widgets::{Block, Paragraph, Widget},
+    text::Text,
+    widgets::Widget,
 };
 
 use crate::WidgetFn;

@@ -1,28 +1,19 @@
 use ratatui::{
-    DefaultTerminal, Frame,
     buffer::Buffer,
-    layout::{Constraint, Direction, Layout, Rect},
-    style::Stylize,
-    symbols::border,
-    text::{Line, Text},
-    widgets::{Block, Paragraph, StatefulWidget, Widget},
+    layout::Rect,
+    widgets::{StatefulWidget, Widget},
 };
 
-use ratatui_image::{
-    Image, StatefulImage,
-    picker::{Picker, ProtocolType},
-    protocol::Protocol,
-};
+use ratatui_image::StatefulImage;
 
 use crate::App;
-use crate::WidgetFn;
 use crate::{Page, PageSignal};
-use crossterm::event::{Event, KeyCode, KeyEventKind};
+use crossterm::event::Event;
 use image::imageops::FilterType;
 
 pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
-    let img_w = app.cat_image.width() as u32;
-    let img_h = app.cat_image.height() as u32;
+    let img_w = app.cat_image.width();
+    let img_h = app.cat_image.height();
 
     let render_width = ((area.height as u32 * img_w * 2) / img_h).min(area.width as u32) as u16;
 
@@ -38,13 +29,13 @@ pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
     image.render(centered, buf, &mut app.image_protocol);
 }
 
-pub fn event_callback(app: &mut App, event: Event) -> Option<PageSignal> {
+pub fn event_callback(_app: &mut App, _event: Event) -> Option<PageSignal> {
     None
 }
 
 pub fn page() -> Page {
     Page {
-        render: render,
-        event_callback: event_callback,
+        render,
+        event_callback,
     }
 }

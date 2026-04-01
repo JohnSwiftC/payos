@@ -11,18 +11,18 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::Stylize,
     symbols::border,
-    text::{Line, Text},
-    widgets::{Block, Paragraph, Widget},
+    text::Line,
+    widgets::{Block, Widget},
 };
 use ratatui_image::{
     picker::Picker,
-    protocol::{Protocol, StatefulProtocol},
+    protocol::StatefulProtocol,
 };
 use std::io;
 use std::process;
 
 use crate::grid::Grid;
-use crate::{code::Code, secret::cat};
+use crate::code::Code;
 
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
 pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
@@ -117,7 +117,7 @@ impl App {
             ..
         }) = event
         {
-            if self.stack.len() == 0 {
+            if self.stack.is_empty() {
                 process::exit(0);
             } else {
                 _ = self.stack.pop();
@@ -173,10 +173,7 @@ impl App {
                 }
             }
 
-            KeyCode::Enter => match self.highlighted {
-                0 => return Some(PageSignal::Push(secret::page())),
-                _ => (),
-            },
+            KeyCode::Enter => if self.highlighted == 0 { return Some(PageSignal::Push(secret::page())) },
 
             _ => (),
         }

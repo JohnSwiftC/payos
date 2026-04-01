@@ -1,19 +1,14 @@
 pub mod cat;
 
 use ratatui::{
-    DefaultTerminal, Frame,
     buffer::Buffer,
-    layout::{Constraint, Direction, Layout, Rect},
-    style::Stylize,
-    symbols::border,
-    text::{Line, Text},
-    widgets::{Block, Paragraph, Widget},
+    layout::Rect,
+    widgets::Widget,
 };
 
 use crossterm::event::{Event, KeyCode, KeyEventKind};
 
 use crate::App;
-use crate::WidgetFn;
 use crate::{Page, PageSignal};
 
 pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
@@ -46,7 +41,7 @@ pub fn callback(app: &mut App, event: Event) -> Option<PageSignal> {
 
 pub fn page() -> Page {
     Page {
-        render: render,
+        render,
         event_callback: callback,
     }
 }

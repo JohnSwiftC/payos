@@ -1,10 +1,9 @@
 use ratatui::{
-    border,
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
     style::Stylize,
     symbols::border,
-    widgets::{Block, Paragraph, Widget, WidgetRef},
+    widgets::{Block, Widget},
 };
 
 use crate::WidgetList;
