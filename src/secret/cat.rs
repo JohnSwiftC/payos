@@ -22,11 +22,7 @@ pub fn render(app: &App, area: Rect, buf: &mut Buffer) {
             .resize_exact(area.width.into(), area.height.into(), FilterType::Triangle);
     let protocol = app
         .picker
-        .new_protocol(
-            app.cat_image.clone(),
-            area,
-            ratatui_image::Resize::Fit(None),
-        )
+        .new_protocol(resized, area, ratatui_image::Resize::Fit(None))
         .unwrap();
 
     let cat_widget = Image::new(&protocol);
