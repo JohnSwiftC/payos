@@ -24,16 +24,7 @@ pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
     let img_w = app.cat_image.width() as u32;
     let img_h = app.cat_image.height() as u32;
 
-    // For halfblocks, each terminal row effectively carries 2 vertical image pixels.
-    // That means the image's aspect ratio in CELL SPACE is about 2 * img_w / img_h.
-    let width_mul = if app.picker.protocol_type() == ProtocolType::Halfblocks {
-        2
-    } else {
-        1
-    };
-
-    let render_width =
-        ((area.height as u32 * img_w * width_mul) / img_h).min(area.width as u32) as u16;
+    let render_width = ((area.height as u32 * img_w * 2) / img_h).min(area.width as u32) as u16;
 
     let centered = Rect {
         x: area.x + area.width.saturating_sub(render_width) / 2,
