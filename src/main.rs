@@ -1,3 +1,4 @@
+mod code;
 mod grid;
 mod richbutton;
 mod secret;
@@ -15,6 +16,7 @@ use ratatui::{
 use std::io;
 use std::process;
 
+use crate::code::Code;
 use crate::grid::Grid;
 
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
@@ -36,7 +38,7 @@ struct App {
     cols: usize,
     highlighted: usize,
     widgets: Vec<WidgetFn>,
-    code_buf: [u8; 4],
+    code: Code,
 }
 
 impl App {
@@ -50,7 +52,7 @@ impl App {
                 richbutton::action_button("Secret Login", "Requires a password"),
                 richbutton::action_button("Some Random Thing", "Does this thing"),
             ],
-            code_buf: [0; 4],
+            code: Code::new(),
         }
     }
 
