@@ -1,8 +1,6 @@
-mod code;
-mod grid;
-mod richbutton;
 mod secret;
 mod util;
+mod widgets;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use image::DynamicImage;
@@ -19,8 +17,8 @@ use ratatui_image::{picker::Picker, protocol::StatefulProtocol};
 use std::io;
 use std::process;
 
-use crate::code::Code;
-use crate::grid::Grid;
+use crate::widgets::grid::Grid;
+use crate::widgets::{code::Code, richbutton};
 
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
 pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
@@ -44,12 +42,18 @@ pub struct App {
     widgets: Vec<WidgetFn>,
     code: Code,
     cat_image: DynamicImage,
+    dog_image: DynamicImage,
     picker: Picker,
     image_protocol: StatefulProtocol,
 }
 
 impl App {
     fn default() -> Self {
+        let dog_image = image::ImageReader::open("dog.jpg")
+            .unwrap()
+            .decode()
+            .unwrap();
+
         let cat_image = image::ImageReader::open("cat.jpg")
             .unwrap()
             .decode()
@@ -67,6 +71,7 @@ impl App {
             ],
             code: Code::new("1234".into()),
             cat_image,
+            dog_image,
             picker,
             image_protocol,
         }
