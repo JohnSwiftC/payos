@@ -2,6 +2,7 @@ mod code;
 mod grid;
 mod richbutton;
 mod secret;
+mod util;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use image::DynamicImage;
@@ -32,6 +33,7 @@ pub enum PageSignal {
 pub struct Page {
     pub render: fn(&mut App, Rect, &mut Buffer),
     pub event_callback: fn(&mut App, Event) -> Option<PageSignal>,
+    pub on_load: Option<fn(&mut App)>,
 }
 
 pub struct App {
@@ -42,6 +44,7 @@ pub struct App {
     widgets: Vec<WidgetFn>,
     code: Code,
     cat_image: DynamicImage,
+    picker: Picker,
     image_protocol: StatefulProtocol,
 }
 
@@ -64,6 +67,7 @@ impl App {
             ],
             code: Code::new("1234".into()),
             cat_image,
+            picker,
             image_protocol,
         }
     }
@@ -128,7 +132,12 @@ impl App {
 
         if let Some(signal) = signal {
             match signal {
-                PageSignal::Push(p) => self.stack.push(p),
+                PageSignal::Push(p) => {
+                    if let Some(on_load) = p.on_load {
+                        on_load(self);
+                    }
+                    self.stack.push(p);
+                }
                 PageSignal::Back => {
                     _ = self.stack.pop();
                 }

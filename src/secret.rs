@@ -39,5 +39,6 @@ pub fn page() -> Page {
     Page {
         render,
         event_callback: callback,
+        on_load: None,
     }
 }
