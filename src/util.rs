@@ -1,4 +1,3 @@
-use crate::App;
 use image::DynamicImage;
 use ratatui::widgets::StatefulWidget;
 use ratatui::{buffer::Buffer, layout::Rect};

@@ -1,11 +1,8 @@
-use ratatui::{buffer::Buffer, layout::Rect, widgets::StatefulWidget};
-
-use ratatui_image::StatefulImage;
+use ratatui::{buffer::Buffer, layout::Rect};
 
 use crate::{App, util};
 use crate::{Page, PageSignal};
 use crossterm::event::Event;
-use image::imageops::FilterType;
 
 pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
     util::render_centered_image(&app.cat_image, &mut app.image_protocol, area, buf);
