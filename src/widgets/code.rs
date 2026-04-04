@@ -8,15 +8,13 @@ use ratatui::{
 pub struct Code {
     index: usize,
     code: [Option<char>; 4],
-    correct: String,
 }
 
 impl Code {
-    pub fn new(correct: String) -> Self {
+    pub fn new() -> Self {
         Self {
             index: 0,
             code: [None; 4],
-            correct,
         }
     }
 
@@ -38,7 +36,11 @@ impl Code {
         self.code[self.index] = None;
     }
 
-    pub fn is_correct(&self) -> bool {
+    pub fn get_code(&self) -> Option<String> {
+        if self.code[0] == None {
+            return None;
+        }
+
         let mut code_string = String::with_capacity(4);
         for i in 0..self.index {
             if let Some(digit) = self.code[i] {
@@ -48,7 +50,7 @@ impl Code {
             }
         }
 
-        code_string == self.correct
+        Some(code_string)
     }
 
     pub fn render(&self, area: Rect, buf: &mut Buffer) {

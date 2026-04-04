@@ -69,7 +69,7 @@ impl App {
                 richbutton::action_button("Secret Login", "Requires a password"),
                 richbutton::action_button("Some Random Thing", "Does this thing"),
             ],
-            code: Code::new("1234".into()),
+            code: Code::new(),
             cat_image,
             dog_image,
             picker,

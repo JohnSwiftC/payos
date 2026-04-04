@@ -23,7 +23,9 @@ pub fn callback(app: &mut App, event: Event) -> Option<PageSignal> {
         KeyCode::Backspace => app.code.pop(),
 
         KeyCode::Enter => {
-            if app.code.is_correct() {
+            if let Some(code) = app.code.get_code()
+                && code == "1234"
+            {
                 return Some(PageSignal::Push(cat::page()));
             }
         }
