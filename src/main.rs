@@ -1,3 +1,4 @@
+mod popup;
 mod secret;
 mod util;
 mod widgets;
@@ -26,6 +27,7 @@ pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
 pub enum PageSignal {
     Back,
     Push(Page),
+    Interupt(Interupt),
 }
 
 pub struct Page {
@@ -34,8 +36,15 @@ pub struct Page {
     pub on_load: Option<fn(&mut App)>,
 }
 
+pub struct Interupt {
+    pub render: fn(&mut App, Rect, &mut Buffer),
+    pub callback: fn(&mut App),
+}
+
 pub struct App {
     stack: Vec<Page>,
+    interupt: Option<Interupt>,
+
     rows: usize,
     cols: usize,
     highlighted: usize,
@@ -62,6 +71,7 @@ impl App {
         let image_protocol = picker.new_resize_protocol(cat_image.clone());
         Self {
             stack: Vec::new(),
+            interupt: None,
             rows: 2,
             cols: 1,
             highlighted: 0,
@@ -79,9 +89,31 @@ impl App {
 
     fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         loop {
+            if let Some(interupt) = self.interupt.take() {
+                terminal.draw(|frame| self.draw_interupt(interupt.render, frame))?;
+                (interupt.callback)(self);
+                // Drain any input events that were buffered during the callback
+                while event::poll(std::time::Duration::ZERO)? {
+                    let _ = event::read();
+                }
+            }
+
             terminal.draw(|frame| self.draw(frame))?;
             self.prop_input();
         }
+    }
+
+    fn draw_interupt(&mut self, render: fn(&mut App, Rect, &mut Buffer), frame: &mut Frame) {
+        let block = Block::bordered()
+            .border_set(border::DOUBLE)
+            .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered())
+            .title_bottom(
+                Line::from(vec![" Exit Page With ".blue(), "<*> ".blue().bold()]).centered(),
+            );
+
+        render(self, block.inner(frame.area()), frame.buffer_mut());
+
+        block.render(frame.area(), frame.buffer_mut());
     }
 
     fn draw(&mut self, frame: &mut Frame) {
@@ -145,6 +177,9 @@ impl App {
                 }
                 PageSignal::Back => {
                     _ = self.stack.pop();
+                }
+                PageSignal::Interupt(i) => {
+                    self.interupt = Some(i);
                 }
             }
         }

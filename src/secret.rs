@@ -1,10 +1,12 @@
-pub mod cat;
+mod cat;
+mod dog;
 
 use ratatui::{buffer::Buffer, layout::Rect};
 
 use crossterm::event::{Event, KeyCode, KeyEventKind};
 
 use crate::App;
+use crate::popup;
 use crate::{Page, PageSignal};
 
 pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
@@ -22,13 +24,12 @@ pub fn callback(app: &mut App, event: Event) -> Option<PageSignal> {
     match key.code {
         KeyCode::Backspace => app.code.pop(),
 
-        KeyCode::Enter => {
-            if let Some(code) = app.code.get_code()
-                && code == "1234"
-            {
-                return Some(PageSignal::Push(cat::page()));
-            }
-        }
+        KeyCode::Enter => match app.code.get_code().as_deref() {
+            Some("1234") => return Some(PageSignal::Push(cat::page())),
+            Some("6824") => return Some(PageSignal::Push(dog::page())),
+
+            _ => return Some(PageSignal::Interupt(popup::unauth::interupt())),
+        },
 
         KeyCode::Char(c) => app.code.push(c),
         _ => (),
