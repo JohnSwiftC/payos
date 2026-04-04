@@ -9,7 +9,7 @@ use ratatui::{
 };
 
 pub fn render(_: &mut App, area: Rect, buf: &mut Buffer) {
-    let text = Text::from(Line::from("Unauthorized".red()));
+    let text = Text::from(Line::from("Unauthorized".red().bold().on_white()));
     let centered = area.centered(
         Constraint::Length(text.width() as u16),
         Constraint::Length(1),
