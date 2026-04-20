@@ -106,7 +106,7 @@ impl App {
     fn draw_interupt(&mut self, render: fn(&mut App, Rect, &mut Buffer), frame: &mut Frame) {
         let block = Block::bordered()
             .border_set(border::DOUBLE)
-            .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered())
+            .title(Line::from(" Sunrise IV Landline ".bold().yellow()).centered())
             .title_bottom(
                 Line::from(vec![" Exit Page With ".blue(), "<*> ".blue().bold()]).centered(),
             );
@@ -119,7 +119,7 @@ impl App {
     fn draw(&mut self, frame: &mut Frame) {
         let block = Block::bordered()
             .border_set(border::DOUBLE)
-            .title(Line::from(" Sunrise V Landline ".bold().yellow()).centered())
+            .title(Line::from(" Sunrise IV Landline ".bold().yellow()).centered())
             .title_bottom(
                 Line::from(vec![" Exit Page With ".blue(), "<*> ".blue().bold()]).centered(),
             );
