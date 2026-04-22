@@ -40,8 +40,8 @@ pub struct InteruptArgs {
     granted_name: &'static str,
 }
 
-impl InteruptArgs {
-    pub fn default() -> Self {
+impl Default for InteruptArgs {
+    fn default() -> Self {
         Self {
             granted_name: "Default",
         }
@@ -65,6 +65,7 @@ pub struct App {
     code: Code,
     cat_image: DynamicImage,
     dog_image: DynamicImage,
+    sunrise_image: DynamicImage,
     picker: Picker,
     image_protocol: StatefulProtocol,
 }
@@ -77,6 +78,11 @@ impl App {
             .unwrap();
 
         let cat_image = image::ImageReader::open("cat.jpg")
+            .unwrap()
+            .decode()
+            .unwrap();
+
+        let sunrise_image = image::ImageReader::open("sunrise.jpg")
             .unwrap()
             .decode()
             .unwrap();
@@ -96,6 +102,7 @@ impl App {
             code: Code::new(),
             cat_image,
             dog_image,
+            sunrise_image,
             picker,
             image_protocol,
         }
