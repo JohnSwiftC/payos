@@ -1,3 +1,4 @@
+mod people;
 mod popup;
 mod secret;
 mod util;
@@ -15,11 +16,14 @@ use ratatui::{
     widgets::{Block, Widget},
 };
 use ratatui_image::{picker::Picker, protocol::StatefulProtocol};
+use sqlite::Connection;
 use std::io;
 use std::process;
 
 use crate::widgets::grid::Grid;
 use crate::widgets::{code::Code, richbutton};
+
+use crate::util::saved;
 
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
 pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
@@ -57,6 +61,7 @@ pub struct App {
     stack: Vec<Page>,
     interupt: Option<Interupt>,
     interupt_args: InteruptArgs,
+    store: saved::Store,
 
     rows: usize,
     cols: usize,
@@ -88,10 +93,16 @@ impl App {
             .unwrap();
         let picker = Picker::from_query_stdio().unwrap();
         let image_protocol = picker.new_resize_protocol(cat_image.clone());
+
+        let store = util::saved::init_db();
+        store.add_person("John");
+        store.add_person("Bill");
+
         Self {
             stack: Vec::new(),
             interupt: None,
             interupt_args: InteruptArgs::default(),
+            store,
             rows: 2,
             cols: 1,
             highlighted: 0,
@@ -241,6 +252,10 @@ impl App {
             KeyCode::Enter => {
                 if self.highlighted == 0 {
                     return Some(PageSignal::Push(secret::page()));
+                }
+
+                if self.highlighted == 1 {
+                    return Some(PageSignal::Push(people::page()));
                 }
             }
 

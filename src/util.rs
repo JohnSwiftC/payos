@@ -1,3 +1,5 @@
+pub mod saved;
+
 use image::DynamicImage;
 use ratatui::widgets::StatefulWidget;
 use ratatui::{buffer::Buffer, layout::Rect};
