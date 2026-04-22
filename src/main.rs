@@ -36,6 +36,18 @@ pub struct Page {
     pub on_load: Option<fn(&mut App)>,
 }
 
+pub struct InteruptArgs {
+    granted_name: &'static str,
+}
+
+impl InteruptArgs {
+    pub fn default() -> Self {
+        Self {
+            granted_name: "Default",
+        }
+    }
+}
+
 pub struct Interupt {
     pub render: fn(&mut App, Rect, &mut Buffer),
     pub callback: fn(&mut App),
@@ -44,6 +56,7 @@ pub struct Interupt {
 pub struct App {
     stack: Vec<Page>,
     interupt: Option<Interupt>,
+    interupt_args: InteruptArgs,
 
     rows: usize,
     cols: usize,
@@ -72,6 +85,7 @@ impl App {
         Self {
             stack: Vec::new(),
             interupt: None,
+            interupt_args: InteruptArgs::default(),
             rows: 2,
             cols: 1,
             highlighted: 0,
@@ -227,6 +241,11 @@ impl App {
         }
 
         None
+    }
+
+    // Manually push a page if needed in interupt
+    pub fn push_page(&mut self, page: Page) {
+        self.stack.push(page);
     }
 }
 
