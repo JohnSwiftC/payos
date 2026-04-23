@@ -120,6 +120,10 @@ impl App {
     }
 
     fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
+        self.image_protocol = self.picker.new_resize_protocol(self.sunrise_image.clone());
+
+        self.interupt = Some(popup::boot::interupt());
+
         loop {
             if let Some(interupt) = self.interupt.take() {
                 terminal.draw(|frame| self.draw_interupt(interupt.render, frame))?;
