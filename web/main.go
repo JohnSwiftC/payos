@@ -3,13 +3,21 @@ package main
 import (
 	"database/sql"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	_ "modernc.org/sqlite"
 )
 
 func main() {
-	db, err := sql.Open("sqlite", "../payos.db")
+
+	if len(os.Args) == 1 {
+		panic("db path not specified")
+	}
+
+	path := os.Args[1]
+
+	db, err := sql.Open("sqlite", path)
 	if err != nil {
 		panic(err)
 	}
