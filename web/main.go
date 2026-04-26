@@ -83,5 +83,9 @@ func main() {
 		c.Redirect(http.StatusFound, "/")
 	})
 
+	r.GET("/exit", func(c *gin.Context) {
+		os.Exit(0)
+	})
+
 	r.Run(":8080")
 }
