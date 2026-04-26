@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayOS - Edit Person</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #333; padding: 2rem; }
+        h1 { margin-bottom: 1.5rem; }
+        .card { background: #fff; border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        input[type="text"] { padding: 0.5rem 0.75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; width: 300px; }
+        button, .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-save { background: #2563eb; color: #fff; }
+        .btn-save:hover { background: #1d4ed8; }
+        .btn-cancel { background: #6b7280; color: #fff; }
+        .btn-cancel:hover { background: #4b5563; }
+        .edit-form { display: flex; gap: 0.5rem; align-items: center; }
+    </style>
+</head>
+<body>
+    <h1>Edit Person</h1>
+
+    <div class="card">
+        <form action="/edit/{{ .id }}" method="POST" class="edit-form">
+            <input type="text" name="name" value="{{ .name }}" required>
+            <button type="submit" class="btn btn-save">Save</button>
+            <a href="/" class="btn btn-cancel">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

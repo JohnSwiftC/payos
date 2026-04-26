@@ -95,8 +95,8 @@ impl App {
         let image_protocol = picker.new_resize_protocol(cat_image.clone());
 
         let store = util::saved::init_db();
-        store.add_person("John");
-        store.add_person("Bill");
+        //store.add_person("John");
+        //store.add_person("Bill");
 
         Self {
             stack: Vec::new(),
