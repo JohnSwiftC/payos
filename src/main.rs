@@ -169,7 +169,7 @@ impl App {
         block.render(frame.area(), frame.buffer_mut());
     }
 
-    fn render(&self, area: Rect, buf: &mut Buffer) {
+    fn render(&mut self, area: Rect, buf: &mut Buffer) {
         let grid = Grid::new(self.rows, self.cols, self.highlighted);
         let layout = Layout::default()
             .direction(Direction::Horizontal)
@@ -177,6 +177,17 @@ impl App {
             .split(area);
 
         grid.render(layout[0], buf, &self.widgets);
+
+        util::render_centered_image(
+            &self.sunrise_image,
+            &mut self.image_protocol,
+            layout[1],
+            buf,
+        );
+    }
+
+    fn on_load(&mut self) {
+        self.image_protocol = self.picker.new_resize_protocol(self.sunrise_image.clone());
     }
 
     fn prop_input(&mut self) {
@@ -193,6 +204,12 @@ impl App {
                 process::exit(0);
             } else {
                 _ = self.stack.pop();
+
+                // Jank in the main pages
+                // on_load function
+                if self.stack.is_empty() {
+                    self.on_load();
+                }
                 return;
             }
         }
@@ -259,7 +276,8 @@ impl App {
                 }
 
                 if self.highlighted == 1 {
-                    return Some(PageSignal::Push(people::page()));
+                    self.interupt = Some(util::web::interupt());
+                    return None;
                 }
             }
 

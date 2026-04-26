@@ -1,4 +1,5 @@
 pub mod saved;
+pub mod web;
 
 use image::DynamicImage;
 use ratatui::widgets::StatefulWidget;
