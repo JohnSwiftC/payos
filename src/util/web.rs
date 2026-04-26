@@ -8,6 +8,8 @@ use ratatui::{
     layout::{Constraint, Rect},
 };
 
+use std::process;
+
 use local_ip_address;
 
 pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
@@ -28,7 +30,21 @@ pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
 }
 
 pub fn callback(_: &mut App) {
-    std::thread::sleep(std::time::Duration::from_secs(1));
+    let web_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("web");
+
+    let mut cmd = process::Command::new("go");
+    cmd.args(["run", ".", "payos.db"])
+        .current_dir(&web_dir)
+        .stderr(process::Stdio::null())
+        .stdout(process::Stdio::null());
+
+    let status = cmd
+        .status()
+        .unwrap_or_else(|e| panic!("spawn failed (cmd = {cmd:?}): {e}"));
+
+    if !status.success() {
+        eprintln!("go exited: {status}");
+    }
 }
 
 pub fn interupt() -> Interupt {

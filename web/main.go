@@ -84,6 +84,7 @@ func main() {
 	})
 
 	r.GET("/exit", func(c *gin.Context) {
+		c.Redirect(http.StatusOK, "/")
 		os.Exit(0)
 	})
 
