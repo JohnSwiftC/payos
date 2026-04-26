@@ -108,7 +108,7 @@ impl App {
             highlighted: 0,
             widgets: vec![
                 richbutton::action_button("Secret Login", "Requires a password"),
-                richbutton::action_button("Some Random Thing", "Does this thing"),
+                richbutton::action_button("Config", "Starts the config server on LAN"),
             ],
             code: Code::new(),
             cat_image,

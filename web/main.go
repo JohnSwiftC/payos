@@ -83,8 +83,7 @@ func main() {
 		c.Redirect(http.StatusFound, "/")
 	})
 
-	r.GET("/exit", func(c *gin.Context) {
-		c.Redirect(http.StatusOK, "/")
+	r.POST("/exit", func(c *gin.Context) {
 		os.Exit(0)
 	})
 

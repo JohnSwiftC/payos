@@ -65,7 +65,8 @@
         <p class="empty">No people yet. Add someone above.</p>
         {{ end }}
     </div>
-
-    <a href="/exit" class="btn btn-delete">Exit</a>
+    <form action="/exit" method="POST" class="inline">
+        <button type="submit" class="btn btn-delete" onclick="return confirm('Close the server?')">Exit</button>
+    </form>
 </body>
 </html>
