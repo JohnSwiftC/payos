@@ -2,7 +2,7 @@
 
 > "What in the hell is a modified payphone and why does it need a TUI"
 
-Payos is a Rust-powered TUI running inside a real, heavily modified payphone. It's driven by a Raspberry Pi embedded in the chassis, using the original hardware—keypad, receiver, and even the card sensor—as inputs to control a fully interactive terminal system.
+Payos is a Rust-powered TUI running inside a real, heavily modified payphone. It's driven by a Raspberry Pi embedded in the chassis, using the original hardware, keypad, receiver, and even the card sensor, as inputs to control a fully interactive terminal system.
 
 ## What It Does
 
