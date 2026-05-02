@@ -1,12 +1,12 @@
 use ratatui::{
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
-    style::Stylize,
-    symbols::border,
+    style::Style,
     widgets::{Block, Widget},
 };
 
 use crate::WidgetList;
+use crate::style;
 
 pub struct Grid {
     cols: usize,
@@ -34,9 +34,13 @@ impl Grid {
 
         for (i, cell) in cells.enumerate() {
             let block = if i == self.highlighted {
-                Block::bordered().border_set(border::ROUNDED).blue()
+                Block::bordered()
+                    .border_set(style::BRACKET)
+                    .border_style(Style::new().fg(style::BORDER_ACTIVE))
             } else {
-                Block::bordered().border_set(border::ROUNDED).white()
+                Block::bordered()
+                    .border_set(style::DOTTED)
+                    .border_style(Style::new().fg(style::BORDER))
             };
 
             widgets[i](block.inner(cell), buf);

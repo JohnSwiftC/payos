@@ -1,6 +1,7 @@
 mod people;
 mod popup;
 mod secret;
+mod style;
 mod util;
 mod widgets;
 
@@ -10,10 +11,7 @@ use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
     layout::{Constraint, Direction, Layout, Rect},
-    style::Stylize,
-    symbols::border,
-    text::Line,
-    widgets::{Block, Widget},
+    widgets::Widget,
 };
 use ratatui_image::{picker::Picker, protocol::StatefulProtocol};
 use sqlite::Connection;
@@ -21,7 +19,7 @@ use std::io;
 use std::process;
 
 use crate::widgets::grid::Grid;
-use crate::widgets::{code::Code, richbutton};
+use crate::widgets::{code::Code, quote, richbutton};
 
 use crate::util::saved;
 
@@ -140,25 +138,13 @@ impl App {
     }
 
     fn draw_interupt(&mut self, render: fn(&mut App, Rect, &mut Buffer), frame: &mut Frame) {
-        let block = Block::bordered()
-            .border_set(border::DOUBLE)
-            .title(Line::from(" Sunrise IV Landline ".bold().yellow()).centered())
-            .title_bottom(
-                Line::from(vec![" Exit Page With ".blue(), "<*> ".blue().bold()]).centered(),
-            );
-
+        let block = style::chassis_block();
         render(self, block.inner(frame.area()), frame.buffer_mut());
-
         block.render(frame.area(), frame.buffer_mut());
     }
 
     fn draw(&mut self, frame: &mut Frame) {
-        let block = Block::bordered()
-            .border_set(border::DOUBLE)
-            .title(Line::from(" Sunrise IV Landline ".bold().yellow()).centered())
-            .title_bottom(
-                Line::from(vec![" Exit Page With ".blue(), "<*> ".blue().bold()]).centered(),
-            );
+        let block = style::chassis_block();
 
         if let Some(page) = self.stack.last() {
             (page.render)(self, block.inner(frame.area()), frame.buffer_mut());
@@ -178,12 +164,8 @@ impl App {
 
         grid.render(layout[0], buf, &self.widgets);
 
-        util::render_centered_image(
-            &self.sunrise_image,
-            &mut self.image_protocol,
-            layout[1],
-            buf,
-        );
+        let quote = quote::quote(&["You guys look like", "you love BoilerQ!"]);
+        quote(layout[1], buf);
     }
 
     fn on_load(&mut self) {

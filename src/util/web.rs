@@ -1,32 +1,55 @@
 use crate::App;
 use crate::Interupt;
+use crate::style;
 use ratatui::style::Stylize;
-use ratatui::text::{Line, Text};
+use ratatui::text::Line;
 use ratatui::widgets::Widget;
 use ratatui::{
     buffer::Buffer,
-    layout::{Constraint, Rect},
+    layout::{Constraint, Layout, Rect},
 };
 
 use std::process;
 
 use local_ip_address;
 
-pub fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
+pub fn render(_: &mut App, area: Rect, buf: &mut Buffer) {
     let local = local_ip_address::local_ip().unwrap().to_string();
 
-    let mut message = String::new();
-    message.push_str("Visit ");
-    message.push_str(&local);
-    message.push_str(" for config");
+    let layout = Layout::vertical([
+        Constraint::Min(0),
+        Constraint::Length(1), // header
+        Constraint::Length(1), // gap
+        Constraint::Length(1), // url
+        Constraint::Length(1), // gap
+        Constraint::Length(1), // status
+        Constraint::Min(0),
+    ])
+    .split(area);
 
-    let text = Text::from(message).blue();
-    let centered = area.centered(
-        Constraint::Length(text.width() as u16),
-        Constraint::Length(1),
-    );
+    Line::from(vec![
+        "━┥ ".fg(style::BORDER),
+        "CONFIG SERVER ONLINE".fg(style::INFO).bold(),
+        " ┝━".fg(style::BORDER),
+    ])
+    .centered()
+    .render(layout[1], buf);
 
-    text.render(centered, buf);
+    Line::from(vec![
+        "▶ ".fg(style::PRIMARY),
+        "http://".fg(style::TEXT_DIM),
+        local.fg(style::TEXT).bold().underlined(),
+        ":8080".fg(style::TEXT_DIM),
+    ])
+    .centered()
+    .render(layout[3], buf);
+
+    Line::from(vec![
+        "// ".fg(style::BORDER),
+        "awaiting connections on LAN".fg(style::TEXT_DIM).italic(),
+    ])
+    .centered()
+    .render(layout[5], buf);
 }
 
 pub fn callback(_: &mut App) {
