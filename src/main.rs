@@ -18,6 +18,10 @@ use sqlite::Connection;
 use std::io;
 use std::process;
 
+use std::any::Any;
+use std::cell::{RefCell, RefMut};
+use std::rc::Rc;
+
 use crate::widgets::grid::Grid;
 use crate::widgets::{code::Code, quote, richbutton};
 
@@ -32,10 +36,27 @@ pub enum PageSignal {
     Interupt(Interupt),
 }
 
+#[derive(Clone)]
+pub struct PageState(Rc<RefCell<Box<dyn Any>>>);
+
+impl PageState {
+    pub fn new<T: Any>(value: T) -> Self {
+        Self(Rc::new(RefCell::new(Box::new(value))))
+    }
+
+    pub fn access<T: Any>(&self) -> RefMut<'_, T> {
+        RefMut::map(self.0.borrow_mut(), |b| {
+            b.downcast_mut::<T>()
+                .expect("page state incorrectly accessed")
+        })
+    }
+}
+
 pub struct Page {
-    pub render: fn(&mut App, Rect, &mut Buffer),
-    pub event_callback: fn(&mut App, Event) -> Option<PageSignal>,
-    pub on_load: Option<fn(&mut App)>,
+    pub state: PageState,
+    pub render: fn(PageState, &mut App, Rect, &mut Buffer),
+    pub event_callback: fn(PageState, &mut App, Event) -> Option<PageSignal>,
+    pub on_load: Option<fn(PageState, &mut App)>,
 }
 
 pub struct InteruptArgs {
@@ -60,12 +81,10 @@ pub struct App {
     interupt: Option<Interupt>,
     interupt_args: InteruptArgs,
     store: saved::Store,
-
     rows: usize,
     cols: usize,
     highlighted: usize,
     widgets: Vec<WidgetFn>,
-    code: Code,
     cat_image: DynamicImage,
     dog_image: DynamicImage,
     sunrise_image: DynamicImage,
@@ -108,7 +127,6 @@ impl App {
                 richbutton::action_button("Secret Login", "Requires a password"),
                 richbutton::action_button("Config", "Starts the config server on LAN"),
             ],
-            code: Code::new(),
             cat_image,
             dog_image,
             sunrise_image,
@@ -147,7 +165,9 @@ impl App {
         let block = style::chassis_block();
 
         if let Some(page) = self.stack.last() {
-            (page.render)(self, block.inner(frame.area()), frame.buffer_mut());
+            let render = page.render;
+            let state = page.state.clone();
+            render(state, self, block.inner(frame.area()), frame.buffer_mut());
         } else {
             self.render(block.inner(frame.area()), frame.buffer_mut());
         }
@@ -197,7 +217,9 @@ impl App {
         }
 
         let signal = if let Some(page) = self.stack.last() {
-            (page.event_callback)(self, event)
+            let cb = page.event_callback;
+            let state = page.state.clone();
+            cb(state, self, event)
         } else {
             self.event_callback(event)
         };
@@ -206,7 +228,7 @@ impl App {
             match signal {
                 PageSignal::Push(p) => {
                     if let Some(on_load) = p.on_load {
-                        on_load(self);
+                        on_load(p.state.clone(), self);
                     }
                     self.stack.push(p);
                 }
