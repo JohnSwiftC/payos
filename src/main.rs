@@ -119,8 +119,8 @@ impl App {
             interupt: None,
             interupt_args: InteruptArgs::default(),
             store,
-            rows: 2,
-            cols: 1,
+            rows: 1,
+            cols: 2,
             highlighted: 0,
             widgets: vec![
                 richbutton::action_button("Secret Login", "Requires a password"),
@@ -177,14 +177,14 @@ impl App {
     fn render(&mut self, area: Rect, buf: &mut Buffer) {
         let grid = Grid::new(self.rows, self.cols, self.highlighted);
         let layout = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .direction(Direction::Vertical)
+            .constraints(vec![Constraint::Percentage(20), Constraint::Percentage(80)])
             .split(area);
 
-        grid.render(layout[0], buf, &self.widgets);
+        grid.render(layout[1], buf, &self.widgets);
 
         let quote = quote::quote(&["You guys look like", "you love BoilerQ!"]);
-        quote(layout[1], buf);
+        quote(layout[0], buf);
     }
 
     fn on_load(&mut self) {

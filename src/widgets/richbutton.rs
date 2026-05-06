@@ -21,15 +21,10 @@ pub fn action_button(title: &'static str, desc: &'static str) -> WidgetFn {
             ])
             .split(r);
 
-        // ◆ TITLE
-        Line::from(vec![
-            "◆ ".fg(style::PRIMARY),
-            title.fg(style::TEXT).bold(),
-        ])
-        .centered()
-        .render(layout[1], b);
+        Line::from(vec!["◆ ".fg(style::PRIMARY), title.fg(style::TEXT).bold()])
+            .centered()
+            .render(layout[1], b);
 
-        // ─── divider
         let bar_w = r.width.saturating_sub(6).max(1) as usize;
         Line::from("─".repeat(bar_w).fg(style::BORDER))
             .centered()
