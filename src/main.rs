@@ -14,7 +14,6 @@ use ratatui::{
     widgets::Widget,
 };
 use ratatui_image::{picker::Picker, protocol::StatefulProtocol};
-use sqlite::Connection;
 use std::io;
 use std::process;
 
@@ -23,18 +22,9 @@ use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
 
 use crate::widgets::grid::Grid;
-use crate::widgets::{code::Code, quote, richbutton};
+use crate::widgets::{quote, richbutton};
 
 use crate::util::saved;
-
-pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
-pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
-
-pub enum PageSignal {
-    Back,
-    Push(Page),
-    Interupt(Interupt),
-}
 
 #[derive(Clone)]
 pub struct PageState(Rc<RefCell<Box<dyn Any>>>);
@@ -74,6 +64,15 @@ impl Default for InteruptArgs {
 pub struct Interupt {
     pub render: fn(&mut App, Rect, &mut Buffer),
     pub callback: fn(&mut App),
+}
+
+pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
+pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
+
+pub enum PageSignal {
+    Back,
+    Push(Page),
+    Interupt(Interupt),
 }
 
 pub struct App {
