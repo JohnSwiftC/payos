@@ -4,7 +4,7 @@ use crate::Page;
 use crate::PageSignal;
 use crate::PageState;
 use ratatui::style::Stylize;
-use ratatui::text::{Line, Text};
+use ratatui::text::Text;
 use ratatui::widgets::Widget;
 use ratatui::{
     buffer::Buffer,

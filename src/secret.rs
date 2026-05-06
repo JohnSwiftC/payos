@@ -14,13 +14,13 @@ struct SecretState {
     code: Code,
 }
 
-pub fn render(state: PageState, app: &mut App, area: Rect, buf: &mut Buffer) {
+pub fn render(state: PageState, _app: &mut App, area: Rect, buf: &mut Buffer) {
     let state = state.access::<SecretState>();
 
     state.code.render(area, buf);
 }
 
-pub fn callback(state: PageState, app: &mut App, event: Event) -> Option<PageSignal> {
+pub fn callback(state: PageState, _app: &mut App, event: Event) -> Option<PageSignal> {
     let mut state = state.access::<SecretState>();
 
     let key = match event {

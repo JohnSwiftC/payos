@@ -40,7 +40,7 @@ impl Code {
     }
 
     pub fn get_code(&self) -> Option<String> {
-        if self.code[0] == None {
+        if self.code[0].is_none() {
             return None;
         }
 
