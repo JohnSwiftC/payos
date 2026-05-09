@@ -10,6 +10,8 @@ use crate::{Page, PageSignal, PageState};
 use crate::widgets::grid;
 use crate::widgets::richbutton;
 
+mod wheel;
+
 struct FunmenuState {
     index: usize,
     max: usize,
@@ -51,6 +53,12 @@ pub fn callback(state: PageState, _app: &mut App, event: InputEvent) -> Option<P
         InputEvent::Up => state.decrement_index(),
         InputEvent::Left => state.decrement_index(),
         InputEvent::Right => state.increment_index(),
+
+        InputEvent::Enter => match state.index {
+            0 => return Some(PageSignal::Interupt(wheel::interupt())),
+
+            _ => return None,
+        },
 
         _ => (),
     }

@@ -55,12 +55,15 @@ pub struct Page {
 
 pub struct InteruptArgs {
     granted_name: &'static str,
+
+    spinner_text: &'static str,
 }
 
 impl Default for InteruptArgs {
     fn default() -> Self {
         Self {
             granted_name: "Default",
+            spinner_text: "Spinning...",
         }
     }
 }

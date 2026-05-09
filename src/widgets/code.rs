@@ -40,9 +40,7 @@ impl Code {
     }
 
     pub fn get_code(&self) -> Option<String> {
-        if self.code[0].is_none() {
-            return None;
-        }
+        self.code[0]?;
 
         let mut code_string = String::with_capacity(4);
         for i in 0..self.index {
@@ -68,7 +66,6 @@ impl Code {
         ])
         .split(area);
 
-        // ━┥ ENTER ACCESS CODE ┝━
         Line::from(vec![
             "━┥ ".fg(style::BORDER),
             "ENTER ACCESS CODE".fg(style::PRIMARY).bold(),
@@ -77,11 +74,14 @@ impl Code {
         .centered()
         .render(layout[1], buf);
 
-        // [ X ]   [ X ]   [ _ ]   [ _ ]
         let mut spans: Vec<Span<'static>> = Vec::new();
         for i in 0..4 {
             let filled = self.code[i].is_some();
-            let bracket_color = if filled { style::PRIMARY } else { style::BORDER };
+            let bracket_color = if filled {
+                style::PRIMARY
+            } else {
+                style::BORDER
+            };
 
             spans.push("[".fg(bracket_color));
             spans.push(" ".into());
