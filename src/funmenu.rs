@@ -60,7 +60,7 @@ pub fn callback(state: PageState, _app: &mut App, event: InputEvent) -> Option<P
 
 pub fn page() -> Page {
     Page {
-        state: PageState::new(FunmenuState { index: 0, max: 0 }),
+        state: PageState::new(FunmenuState { index: 0, max: 2 }),
         render,
         event_callback: callback,
         on_load: None,
