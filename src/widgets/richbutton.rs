@@ -30,12 +30,8 @@ pub fn action_button(title: &'static str, desc: &'static str) -> WidgetFn {
             .centered()
             .render(layout[2], b);
 
-        // // description
-        Line::from(vec![
-            "// ".fg(style::TEXT_DIM),
-            desc.fg(style::TEXT_DIM).italic(),
-        ])
-        .centered()
-        .render(layout[3], b);
+        Line::from(vec![desc.fg(style::TEXT_DIM).italic()])
+            .centered()
+            .render(layout[3], b);
     })
 }
