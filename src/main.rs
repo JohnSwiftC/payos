@@ -124,10 +124,11 @@ impl App {
             interupt_args: InteruptArgs::default(),
             store,
             rows: 1,
-            cols: 2,
+            cols: 3,
             highlighted: 0,
             widgets: vec![
                 richbutton::action_button("Secret Login", "Requires a password"),
+                richbutton::action_button("Dopamine Menu", "Games and Reels"),
                 richbutton::action_button("Config", "Starts the config server on LAN"),
             ],
             cat_image,
@@ -288,6 +289,10 @@ impl App {
                 }
 
                 if self.highlighted == 1 {
+                    return Some(PageSignal::Push(funmenu::page()));
+                }
+
+                if self.highlighted == 2 {
                     self.interupt = Some(util::web::interupt());
                     return None;
                 }

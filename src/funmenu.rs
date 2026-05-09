@@ -12,6 +12,21 @@ use crate::widgets::richbutton;
 
 struct FunmenuState {
     index: usize,
+    max: usize,
+}
+
+impl FunmenuState {
+    fn increment_index(&mut self) {
+        if self.index != self.max {
+            self.index += 1;
+        }
+    }
+
+    fn decrement_index(&mut self) {
+        if self.index != 0 {
+            self.index -= 1;
+        }
+    }
 }
 
 pub fn render(state: PageState, _app: &mut App, area: Rect, buf: &mut Buffer) {
@@ -29,12 +44,23 @@ pub fn render(state: PageState, _app: &mut App, area: Rect, buf: &mut Buffer) {
 }
 
 pub fn callback(state: PageState, _app: &mut App, event: InputEvent) -> Option<PageSignal> {
+    let mut state = state.access::<FunmenuState>();
+
+    match event {
+        InputEvent::Down => state.increment_index(),
+        InputEvent::Up => state.decrement_index(),
+        InputEvent::Left => state.decrement_index(),
+        InputEvent::Right => state.increment_index(),
+
+        _ => (),
+    }
+
     None
 }
 
 pub fn page() -> Page {
     Page {
-        state: PageState::new(FunmenuState { index: 0 }),
+        state: PageState::new(FunmenuState { index: 0, max: 0 }),
         render,
         event_callback: callback,
         on_load: None,
