@@ -1,5 +1,6 @@
 use ratatui::{buffer::Buffer, layout::Rect};
 
+use crate::input::InputEvent;
 use crate::{App, util};
 use crate::{Page, PageSignal, PageState};
 use crossterm::event::Event;
@@ -8,7 +9,7 @@ pub fn render(_state: PageState, app: &mut App, area: Rect, buf: &mut Buffer) {
     util::render_centered_image(&app.dog_image, &mut app.image_protocol, area, buf);
 }
 
-pub fn event_callback(_state: PageState, _app: &mut App, _event: Event) -> Option<PageSignal> {
+pub fn event_callback(_state: PageState, _app: &mut App, _event: InputEvent) -> Option<PageSignal> {
     None
 }
 

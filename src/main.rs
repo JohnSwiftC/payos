@@ -1,3 +1,5 @@
+mod funmenu;
+mod input;
 mod people;
 mod popup;
 mod secret;
@@ -26,6 +28,8 @@ use crate::widgets::{quote, richbutton};
 
 use crate::util::saved;
 
+use input::InputEvent;
+
 #[derive(Clone)]
 pub struct PageState(Rc<RefCell<Box<dyn Any>>>);
 
@@ -45,7 +49,7 @@ impl PageState {
 pub struct Page {
     pub state: PageState,
     pub render: fn(PageState, &mut App, Rect, &mut Buffer),
-    pub event_callback: fn(PageState, &mut App, Event) -> Option<PageSignal>,
+    pub event_callback: fn(PageState, &mut App, InputEvent) -> Option<PageSignal>,
     pub on_load: Option<fn(PageState, &mut App)>,
 }
 
@@ -218,7 +222,12 @@ impl App {
         let signal = if let Some(page) = self.stack.last() {
             let cb = page.event_callback;
             let state = page.state.clone();
-            cb(state, self, event)
+
+            if let Some(input_event) = InputEvent::match_event(event) {
+                cb(state, self, input_event)
+            } else {
+                None
+            }
         } else {
             self.event_callback(event)
         };

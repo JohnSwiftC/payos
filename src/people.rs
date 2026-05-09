@@ -1,5 +1,6 @@
 use crate::App;
 use crate::Event;
+use crate::InputEvent;
 use crate::Page;
 use crate::PageSignal;
 use crate::PageState;
@@ -29,7 +30,7 @@ pub fn render(_state: PageState, app: &mut App, area: Rect, buf: &mut Buffer) {
     text.render(centered, buf);
 }
 
-pub fn callback(_state: PageState, _app: &mut App, _event: Event) -> Option<PageSignal> {
+pub fn callback(_state: PageState, _app: &mut App, _event: InputEvent) -> Option<PageSignal> {
     None
 }
 

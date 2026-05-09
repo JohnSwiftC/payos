@@ -6,6 +6,7 @@ use ratatui::{buffer::Buffer, layout::Rect};
 use crossterm::event::{Event, KeyCode, KeyEventKind};
 
 use crate::App;
+use crate::InputEvent;
 use crate::popup;
 use crate::widgets::code::Code;
 use crate::{Page, PageSignal, PageState};
@@ -20,27 +21,20 @@ pub fn render(state: PageState, _app: &mut App, area: Rect, buf: &mut Buffer) {
     state.code.render(area, buf);
 }
 
-pub fn callback(state: PageState, _app: &mut App, event: Event) -> Option<PageSignal> {
+pub fn callback(state: PageState, _app: &mut App, event: InputEvent) -> Option<PageSignal> {
     let mut state = state.access::<SecretState>();
 
-    let key = match event {
-        Event::Key(key) if key.kind == KeyEventKind::Press => key,
-        _ => {
-            return None;
-        }
-    };
+    match event {
+        InputEvent::Backspace => state.code.pop(),
 
-    match key.code {
-        KeyCode::Backspace => state.code.pop(),
-
-        KeyCode::Enter => match state.code.get_code().as_deref() {
+        InputEvent::Enter => match state.code.get_code().as_deref() {
             Some("1234") => return Some(PageSignal::Push(cat::page())),
             Some("6824") => return Some(PageSignal::Push(dog::page())),
 
             _ => return Some(PageSignal::Interupt(popup::unauth::interupt())),
         },
 
-        KeyCode::Char(c) => state.code.push(c),
+        InputEvent::Char(c) => state.code.push(c),
         _ => (),
     }
 
