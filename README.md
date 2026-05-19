@@ -65,9 +65,14 @@ So, I had the joy of writing my own. Here's how it works:
 
 The main basis of my TUI. The app maintains a stack of *Pages*; the page at the top of the stack is the current page being rendered. A `Page` has three main components behind it:
 
+* State
 * The render function
 * An event callback
 * An on-load function
+
+State is an interesting solution to an interesting problems. For reasons completely beyond me (and trust me, I tried), I cannot retrofit the framework for pages to be trait based, where a page has its state contained in a struct which just implements a `Page` trait. Something something ownership. So instead, a page is given `PageState`, which is simply a `Rc<RefCell<Box<dyn Any>>>` in a unit struct. It *does* look nasty at first, but it's given an access function over a generic type (the type of your state), to access it as a RefMut correctly in both the render functions and event callback.
+
+This can be seen in `secret.rs`, where I do have to use it in both. It's actually quite nice when it is used within the framework, the only real issue is how it is actually implemented. Moving on...
 
 The render function is how the page is *actually* rendered. It's given access to global app state and the screen buffer so widgets can be rendered there.
 

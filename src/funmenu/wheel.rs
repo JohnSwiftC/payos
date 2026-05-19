@@ -20,11 +20,10 @@ fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
 }
 
 fn callback(app: &mut App) {
-    std::thread::sleep(Duration::from_secs(3));
-
     if app.interupt_args.spinner_text == "Test 1" {
         app.interupt = Some(interupt());
     }
+    std::thread::sleep(Duration::from_secs(3));
 }
 
 pub fn interupt() -> Interupt {
