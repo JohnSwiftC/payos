@@ -13,63 +13,67 @@ use std::process;
 
 use local_ip_address;
 
-pub fn render(_: &mut App, area: Rect, buf: &mut Buffer) {
-    let local = local_ip_address::local_ip().unwrap().to_string();
+pub struct Web;
 
-    let layout = Layout::vertical([
-        Constraint::Min(0),
-        Constraint::Length(1), // header
-        Constraint::Length(1), // gap
-        Constraint::Length(1), // url
-        Constraint::Length(1), // gap
-        Constraint::Length(1), // status
-        Constraint::Min(0),
-    ])
-    .split(area);
+impl Interupt for Web {
+    fn render(&mut self, _: &mut App, area: Rect, buf: &mut Buffer) {
+        let local = local_ip_address::local_ip().unwrap().to_string();
 
-    Line::from(vec![
-        "━┥ ".fg(style::BORDER),
-        "CONFIG SERVER ONLINE".fg(style::INFO).bold(),
-        " ┝━".fg(style::BORDER),
-    ])
-    .centered()
-    .render(layout[1], buf);
+        let layout = Layout::vertical([
+            Constraint::Min(0),
+            Constraint::Length(1), // header
+            Constraint::Length(1), // gap
+            Constraint::Length(1), // url
+            Constraint::Length(1), // gap
+            Constraint::Length(1), // status
+            Constraint::Min(0),
+        ])
+        .split(area);
 
-    Line::from(vec![
-        "▶ ".fg(style::PRIMARY),
-        "http://".fg(style::TEXT_DIM),
-        local.fg(style::TEXT).bold().underlined(),
-        ":8080".fg(style::TEXT_DIM),
-    ])
-    .centered()
-    .render(layout[3], buf);
+        Line::from(vec![
+            "━┥ ".fg(style::BORDER),
+            "CONFIG SERVER ONLINE".fg(style::INFO).bold(),
+            " ┝━".fg(style::BORDER),
+        ])
+        .centered()
+        .render(layout[1], buf);
 
-    Line::from(vec![
-        "// ".fg(style::BORDER),
-        "awaiting connections on LAN".fg(style::TEXT_DIM).italic(),
-    ])
-    .centered()
-    .render(layout[5], buf);
-}
+        Line::from(vec![
+            "▶ ".fg(style::PRIMARY),
+            "http://".fg(style::TEXT_DIM),
+            local.fg(style::TEXT).bold().underlined(),
+            ":8080".fg(style::TEXT_DIM),
+        ])
+        .centered()
+        .render(layout[3], buf);
 
-pub fn callback(_: &mut App) {
-    let web_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("web");
+        Line::from(vec![
+            "// ".fg(style::BORDER),
+            "awaiting connections on LAN".fg(style::TEXT_DIM).italic(),
+        ])
+        .centered()
+        .render(layout[5], buf);
+    }
 
-    let mut cmd = process::Command::new("go");
-    cmd.args(["run", ".", "payos.db"])
-        .current_dir(&web_dir)
-        .stderr(process::Stdio::null())
-        .stdout(process::Stdio::null());
+    fn callback(&mut self, _: &mut App) {
+        let web_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("web");
 
-    let status = cmd
-        .status()
-        .unwrap_or_else(|e| panic!("spawn failed (cmd = {cmd:?}): {e}"));
+        let mut cmd = process::Command::new("go");
+        cmd.args(["run", ".", "payos.db"])
+            .current_dir(&web_dir)
+            .stderr(process::Stdio::null())
+            .stdout(process::Stdio::null());
 
-    if !status.success() {
-        eprintln!("go exited: {status}");
+        let status = cmd
+            .status()
+            .unwrap_or_else(|e| panic!("spawn failed (cmd = {cmd:?}): {e}"));
+
+        if !status.success() {
+            eprintln!("go exited: {status}");
+        }
     }
 }
 
-pub fn interupt() -> Interupt {
-    Interupt { render, callback }
+pub fn interupt() -> Box<Web> {
+    Box::new(Web)
 }

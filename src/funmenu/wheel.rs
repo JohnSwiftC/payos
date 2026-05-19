@@ -7,25 +7,32 @@ use ratatui::{buffer::Buffer, layout::Rect};
 use crate::App;
 use crate::Interupt;
 
-fn render(app: &mut App, area: Rect, buf: &mut Buffer) {
-    if app.interupt_args.spinner_text != "Test 1" {
-        app.interupt_args.spinner_text = "Test 1";
-    } else {
-        app.interupt_args.spinner_text = "Test 2";
-    }
-
-    let text = Text::from(app.interupt_args.spinner_text);
-
-    text.render(area, buf);
+pub struct Wheel {
+    curr: &'static str,
 }
 
-fn callback(app: &mut App) {
-    if app.interupt_args.spinner_text == "Test 1" {
-        app.interupt = Some(interupt());
+impl Interupt for Wheel {
+    fn render(&mut self, _: &mut App, area: Rect, buf: &mut Buffer) {
+        if self.curr != "Test 1" {
+            self.curr = "Test 1";
+        } else {
+            self.curr = "Test 2";
+        }
+
+        let text = Text::from(self.curr);
+
+        text.render(area, buf);
     }
-    std::thread::sleep(Duration::from_secs(3));
+
+    fn callback(&mut self, app: &mut App) {
+        std::thread::sleep(Duration::from_secs(3));
+
+        if self.curr == "Test 1" {
+            app.interupt = Some(interupt());
+        }
+    }
 }
 
-pub fn interupt() -> Interupt {
-    Interupt { render, callback }
+pub fn interupt() -> Box<Wheel> {
+    Box::new(Wheel { curr: "Default" })
 }

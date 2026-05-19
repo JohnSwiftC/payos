@@ -53,24 +53,14 @@ pub struct Page {
     pub on_load: Option<fn(PageState, &mut App)>,
 }
 
-pub struct InteruptArgs {
-    granted_name: &'static str,
+//pub struct Interupt {
+//    pub render: fn(&mut App, Rect, &mut Buffer),
+//    pub callback: fn(&mut App),
+//}
 
-    spinner_text: &'static str,
-}
-
-impl Default for InteruptArgs {
-    fn default() -> Self {
-        Self {
-            granted_name: "Default",
-            spinner_text: "Spinning...",
-        }
-    }
-}
-
-pub struct Interupt {
-    pub render: fn(&mut App, Rect, &mut Buffer),
-    pub callback: fn(&mut App),
+pub trait Interupt {
+    fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer);
+    fn callback(&mut self, app: &mut App);
 }
 
 pub type WidgetList = Vec<Box<dyn Fn(Rect, &mut Buffer)>>;
@@ -79,13 +69,12 @@ pub type WidgetFn = Box<dyn Fn(Rect, &mut Buffer)>;
 pub enum PageSignal {
     Back,
     Push(Page),
-    Interupt(Interupt),
+    Interupt(Box<dyn Interupt>),
 }
 
 pub struct App {
     stack: Vec<Page>,
-    interupt: Option<Interupt>,
-    interupt_args: InteruptArgs,
+    interupt: Option<Box<dyn Interupt>>,
     store: saved::Store,
     rows: usize,
     cols: usize,
@@ -124,7 +113,6 @@ impl App {
         Self {
             stack: Vec::new(),
             interupt: None,
-            interupt_args: InteruptArgs::default(),
             store,
             rows: 1,
             cols: 3,
@@ -148,9 +136,10 @@ impl App {
         self.interupt = Some(popup::boot::interupt());
 
         loop {
-            while let Some(interupt) = self.interupt.take() {
-                terminal.draw(|frame| self.draw_interupt(interupt.render, frame))?;
-                (interupt.callback)(self);
+            while let Some(mut interupt) = self.interupt.take() {
+                let unboxed = interupt.as_mut();
+                terminal.draw(|frame| self.draw_interupt(unboxed, frame))?;
+                unboxed.callback(self);
                 // Drain any input events that were buffered during the callback
                 while event::poll(std::time::Duration::ZERO)? {
                     let _ = event::read();
@@ -162,9 +151,9 @@ impl App {
         }
     }
 
-    fn draw_interupt(&mut self, render: fn(&mut App, Rect, &mut Buffer), frame: &mut Frame) {
+    fn draw_interupt(&mut self, interupt: &mut (dyn Interupt + 'static), frame: &mut Frame) {
         let block = style::chassis_block();
-        render(self, block.inner(frame.area()), frame.buffer_mut());
+        interupt.render(self, block.inner(frame.area()), frame.buffer_mut());
         block.render(frame.area(), frame.buffer_mut());
     }
 

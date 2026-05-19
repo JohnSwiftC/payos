@@ -17,7 +17,7 @@ pub fn on_load(_state: PageState, app: &mut App) {
     // This interupt has a sleep call like unauth
     // but it will wait longer than that because it takes time
     // for the dock image to be rendered in the runder_centered_image function
-    app.interupt = Some(super::popup::granted::with_name(app, "John"));
+    app.interupt = Some(super::popup::granted::with_name("John"));
     app.image_protocol = app.picker.new_resize_protocol(app.dog_image.clone());
 }
 
