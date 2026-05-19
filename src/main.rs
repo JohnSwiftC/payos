@@ -148,7 +148,7 @@ impl App {
         self.interupt = Some(popup::boot::interupt());
 
         loop {
-            if let Some(interupt) = self.interupt.take() {
+            while let Some(interupt) = self.interupt.take() {
                 terminal.draw(|frame| self.draw_interupt(interupt.render, frame))?;
                 (interupt.callback)(self);
                 // Drain any input events that were buffered during the callback
