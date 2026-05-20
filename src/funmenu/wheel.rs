@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use ratatui::layout::Constraint;
 use ratatui::layout::Layout;
 use ratatui::text::{Line, Span};
@@ -18,6 +20,11 @@ pub struct Wheel {
 
 impl Interupt for Wheel {
     fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer) {
+        if self.names.is_empty() {
+            no_names_error(area, buf);
+            return;
+        }
+
         let layout = Layout::vertical([
             Constraint::Min(0),
             Constraint::Length(1),
@@ -75,12 +82,19 @@ impl Interupt for Wheel {
     }
 
     fn callback(&mut self, app: &mut App) {
+        let names = app.store.get_people();
+
+        if names.is_empty() {
+            std::thread::sleep(Duration::from_secs(3));
+            return;
+        }
+
         let spins = 30;
 
         if self.iteration != 30 {
             let end = self.iteration + 1 == 30;
             app.interupt = Some(Box::new(Wheel {
-                names: app.store.get_people(),
+                names,
                 iteration: self.iteration + 1,
                 end,
             }))
@@ -94,6 +108,39 @@ impl Interupt for Wheel {
             ));
         }
     }
+}
+
+fn no_names_error(area: Rect, buf: &mut Buffer) {
+    let layout = Layout::vertical([
+        Constraint::Min(0),
+        Constraint::Length(1),
+        Constraint::Length(1),
+        Constraint::Length(1),
+        Constraint::Length(1),
+        Constraint::Length(1),
+        Constraint::Min(0),
+    ])
+    .split(area);
+
+    let bar_w = area.width.saturating_sub(8).max(1) as usize;
+
+    let bar = "═".repeat(bar_w);
+
+    Line::from(vec![bar.clone().fg(style::ALERT)])
+        .centered()
+        .render(layout[1], buf);
+
+    Line::from(vec![
+        "▌ ".fg(style::SUCCESS).bold(),
+        "No names in config DB, visit the config menu!".fg(style::ALERT),
+        " ▐".fg(style::SUCCESS).bold(),
+    ])
+    .centered()
+    .render(layout[3], buf);
+
+    Line::from(bar.fg(style::ALERT))
+        .centered()
+        .render(layout[5], buf);
 }
 
 pub fn interupt(names: Vec<String>) -> Box<Wheel> {
