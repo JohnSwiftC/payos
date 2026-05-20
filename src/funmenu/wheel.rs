@@ -12,6 +12,8 @@ use crate::util::saved;
 use ratatui::style::Stylize;
 use ratatui::widgets::Widget;
 
+use rand::seq::SliceRandom;
+
 pub struct Wheel {
     names: Vec<String>,
     iteration: usize,
@@ -82,7 +84,7 @@ impl Interupt for Wheel {
     }
 
     fn callback(&mut self, app: &mut App) {
-        let names = app.store.get_people();
+        let names = std::mem::take(&mut self.names);
 
         if names.is_empty() {
             std::thread::sleep(Duration::from_secs(3));
@@ -143,7 +145,10 @@ fn no_names_error(area: Rect, buf: &mut Buffer) {
         .render(layout[5], buf);
 }
 
-pub fn interupt(names: Vec<String>) -> Box<Wheel> {
+pub fn interupt(mut names: Vec<String>) -> Box<Wheel> {
+    let mut rng = rand::rng();
+    names.shuffle(&mut rng);
+
     Box::new(Wheel {
         names,
         iteration: 0,
