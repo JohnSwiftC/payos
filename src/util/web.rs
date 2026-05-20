@@ -56,10 +56,12 @@ impl Interupt for Web {
     }
 
     fn callback(&mut self, _: &mut App) {
-        let web_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("web");
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let web_dir = root.join("web");
+        let db_path = root.join("payos.db");
 
         let mut cmd = process::Command::new("go");
-        cmd.args(["run", ".", "payos.db"])
+        cmd.args(["run", ".", db_path.to_str().unwrap()])
             .current_dir(&web_dir)
             .stderr(process::Stdio::null())
             .stdout(process::Stdio::null());

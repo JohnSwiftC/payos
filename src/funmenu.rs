@@ -1,8 +1,7 @@
 use ratatui::{buffer::Buffer, layout::Rect};
 
-
-use crate::App;
 use crate::input::InputEvent;
+use crate::{App, people};
 use crate::{Page, PageSignal, PageState};
 
 use crate::widgets::grid;
@@ -43,7 +42,7 @@ pub fn render(state: PageState, _app: &mut App, area: Rect, buf: &mut Buffer) {
     grid.render(area, buf, &buttons);
 }
 
-pub fn callback(state: PageState, _app: &mut App, event: InputEvent) -> Option<PageSignal> {
+pub fn callback(state: PageState, app: &mut App, event: InputEvent) -> Option<PageSignal> {
     let mut state = state.access::<FunmenuState>();
 
     match event {
@@ -53,7 +52,15 @@ pub fn callback(state: PageState, _app: &mut App, event: InputEvent) -> Option<P
         InputEvent::Right => state.increment_index(),
 
         InputEvent::Enter => match state.index {
-            0 => return Some(PageSignal::Interupt(wheel::interupt())),
+            0 => {
+                return Some(PageSignal::Interupt(wheel::interupt(
+                    app.store.get_people(),
+                )));
+            }
+
+            1 => {
+                return Some(PageSignal::Push(people::page()));
+            }
 
             _ => return None,
         },
