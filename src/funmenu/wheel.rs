@@ -17,7 +17,7 @@ pub struct Wheel {
 }
 
 impl Interupt for Wheel {
-    fn render(&mut self, _: &mut App, area: Rect, buf: &mut Buffer) {
+    fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer) {
         let layout = Layout::vertical([
             Constraint::Min(0),
             Constraint::Length(1),
@@ -29,8 +29,18 @@ impl Interupt for Wheel {
         ])
         .split(area);
 
-        let bar_w = area.width.saturating_sub(8).max(1) as usize;
-        let bar = "═".repeat(bar_w);
+        let desc = app.store.get_wheel_desc();
+
+        let top_bar_w = area
+            .width
+            .saturating_sub(8)
+            .saturating_sub(desc.len() as u16 + 2)
+            .max(1) as usize;
+
+        let bottom_bar_w = area.width.saturating_sub(8).max(1) as usize;
+
+        let bar = "═".repeat(top_bar_w / 2);
+        let bottom_bar = "═".repeat(bottom_bar_w);
 
         let index = self.iteration % self.names.len();
         let name = self.names[index].clone();
@@ -41,9 +51,15 @@ impl Interupt for Wheel {
             name.fg(style::ALERT)
         };
 
-        Line::from(bar.clone().fg(style::ALERT))
-            .centered()
-            .render(layout[1], buf);
+        Line::from(vec![
+            bar.clone().fg(style::ALERT),
+            " ".bold(),
+            desc.fg(style::PRIMARY).bold(),
+            " ".bold(),
+            bar.clone().fg(style::ALERT),
+        ])
+        .centered()
+        .render(layout[1], buf);
 
         Line::from(vec![
             "▌ ".fg(style::SUCCESS).bold(),
@@ -53,7 +69,7 @@ impl Interupt for Wheel {
         .centered()
         .render(layout[3], buf);
 
-        Line::from(bar.fg(style::ALERT))
+        Line::from(bottom_bar.fg(style::ALERT))
             .centered()
             .render(layout[5], buf);
     }

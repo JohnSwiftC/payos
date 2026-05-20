@@ -41,8 +41,9 @@ impl Store {
     pub fn get_wheel_desc(&self) -> String {
         let mut statement = self
             .conn
-            .prepare("SELECT * FROM desc WHERE name = wheel")
+            .prepare("SELECT desc FROM descs WHERE name = ?")
             .unwrap();
+        statement.bind((1, "wheel")).unwrap();
 
         if let Ok(State::Row) = statement.next() {
             return statement
@@ -50,6 +51,6 @@ impl Store {
                 .unwrap_or("Error reading desc".into());
         }
 
-        "No desc provided".into()
+        "Spin the Wheel".into()
     }
 }
