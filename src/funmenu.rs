@@ -34,7 +34,7 @@ pub fn render(state: PageState, _app: &mut App, area: Rect, buf: &mut Buffer) {
     let grid = grid::Grid::new(3, 1, state.index);
 
     let buttons = vec![
-        richbutton::action_button("Drinking Wheel", "Spin The Wheel"),
+        richbutton::action_button("Spin the Wheel", "Just like CS:GO"),
         richbutton::action_button("Game 2", "Insert game 2 lol"),
         richbutton::action_button("Reels", "Stimmax"),
     ];
