@@ -3,7 +3,6 @@ mod dog;
 
 use ratatui::{buffer::Buffer, layout::Rect};
 
-use crossterm::event::{Event, KeyCode, KeyEventKind};
 
 use crate::App;
 use crate::InputEvent;

@@ -74,7 +74,6 @@ pub enum PageSignal {
 
 pub struct App {
     stack: Vec<Page>,
-    interupt: Option<Box<dyn Interupt>>,
     store: saved::Store,
     rows: usize,
     cols: usize,
@@ -85,6 +84,7 @@ pub struct App {
     sunrise_image: DynamicImage,
     picker: Picker,
     image_protocol: StatefulProtocol,
+    interupt: Option<Box<dyn Interupt>>,
 }
 
 impl App {

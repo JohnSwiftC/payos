@@ -14,7 +14,7 @@ pub struct Granted {
 }
 
 impl Interupt for Granted {
-    fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer) {
+    fn render(&mut self, _app: &mut App, area: Rect, buf: &mut Buffer) {
         let layout = Layout::vertical([
             Constraint::Min(0),
             Constraint::Length(1),

@@ -3,7 +3,6 @@ use ratatui::{buffer::Buffer, layout::Rect};
 use crate::input::InputEvent;
 use crate::{App, util};
 use crate::{Page, PageSignal, PageState};
-use crossterm::event::Event;
 
 pub fn render(_state: PageState, app: &mut App, area: Rect, buf: &mut Buffer) {
     util::render_centered_image(&app.cat_image, &mut app.image_protocol, area, buf);

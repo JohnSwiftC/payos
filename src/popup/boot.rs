@@ -10,7 +10,7 @@ impl Interupt for Boot {
         util::render_centered_image(&app.sunrise_image, &mut app.image_protocol, area, buf);
     }
 
-    fn callback(&mut self, app: &mut App) {
+    fn callback(&mut self, _app: &mut App) {
         std::thread::sleep(std::time::Duration::from_secs(1));
     }
 }

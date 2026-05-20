@@ -1,10 +1,8 @@
 use ratatui::{buffer::Buffer, layout::Rect};
 
-use crossterm::event::{Event, KeyCode, KeyEventKind};
 
 use crate::App;
 use crate::input::InputEvent;
-use crate::popup;
 use crate::{Page, PageSignal, PageState};
 
 use crate::widgets::grid;

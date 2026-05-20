@@ -1,5 +1,4 @@
 use crate::App;
-use crate::Event;
 use crate::InputEvent;
 use crate::Page;
 use crate::PageSignal;
