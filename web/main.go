@@ -24,6 +24,7 @@ func main() {
 	defer db.Close()
 
 	db.Exec("CREATE TABLE IF NOT EXISTS people (name TEXT)")
+	db.Exec("CREATE TABLE IF NOT EXISTS descs (name TEXT, desc TEXT)")
 
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
@@ -81,6 +82,53 @@ func main() {
 			db.Exec("UPDATE people SET name = ? WHERE rowid = ?", name, id)
 		}
 		c.Redirect(http.StatusFound, "/")
+	})
+
+	r.GET("/text", func(c *gin.Context) {
+		rows, err := db.Query("SELECT rowid, name, desc FROM descs ORDER BY name")
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+		defer rows.Close()
+
+		type Entry struct {
+			ID    int
+			Name  string
+			Value string
+		}
+		var entries []Entry
+		for rows.Next() {
+			var e Entry
+			rows.Scan(&e.ID, &e.Name, &e.Value)
+			entries = append(entries, e)
+		}
+		c.HTML(http.StatusOK, "text.html", gin.H{"entries": entries})
+	})
+
+	r.POST("/text/add", func(c *gin.Context) {
+		name := c.PostForm("name")
+		value := c.PostForm("value")
+		if name != "" {
+			db.Exec("INSERT INTO descs (name, desc) VALUES (?, ?)", name, value)
+		}
+		c.Redirect(http.StatusFound, "/text")
+	})
+
+	r.POST("/text/edit/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		name := c.PostForm("name")
+		value := c.PostForm("value")
+		if name != "" {
+			db.Exec("UPDATE descs SET name = ?, desc = ? WHERE rowid = ?", name, value, id)
+		}
+		c.Redirect(http.StatusFound, "/text")
+	})
+
+	r.POST("/text/delete/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		db.Exec("DELETE FROM descs WHERE rowid = ?", id)
+		c.Redirect(http.StatusFound, "/text")
 	})
 
 	r.POST("/exit", func(c *gin.Context) {
