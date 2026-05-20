@@ -13,6 +13,7 @@ use ratatui::widgets::Widget;
 pub struct Wheel {
     names: Vec<String>,
     iteration: usize,
+    end: bool,
 }
 
 impl Interupt for Wheel {
@@ -34,13 +35,19 @@ impl Interupt for Wheel {
         let index = self.iteration % self.names.len();
         let name = self.names[index].clone();
 
+        let name = if self.end {
+            name.fg(style::SUCCESS)
+        } else {
+            name.fg(style::ALERT)
+        };
+
         Line::from(bar.clone().fg(style::ALERT))
             .centered()
             .render(layout[1], buf);
 
         Line::from(vec![
             "▌ ".fg(style::SUCCESS).bold(),
-            name.fg(style::ALERT),
+            name,
             " ▐".fg(style::SUCCESS).bold(),
         ])
         .centered()
@@ -52,16 +59,24 @@ impl Interupt for Wheel {
     }
 
     fn callback(&mut self, app: &mut App) {
-        if self.iteration != 40 {
+        let spins = 30;
+
+        if self.iteration != 30 {
+            let end = self.iteration + 1 == 30;
             app.interupt = Some(Box::new(Wheel {
                 names: app.store.get_people(),
                 iteration: self.iteration + 1,
+                end,
             }))
         }
 
-        std::thread::sleep(std::time::Duration::from_millis(
-            self.iteration as u64 * 100,
-        ));
+        if self.iteration == spins {
+            std::thread::sleep(std::time::Duration::from_secs(5));
+        } else {
+            std::thread::sleep(std::time::Duration::from_millis(
+                self.iteration as u64 * self.iteration as u64,
+            ));
+        }
     }
 }
 
@@ -69,5 +84,6 @@ pub fn interupt(names: Vec<String>) -> Box<Wheel> {
     Box::new(Wheel {
         names,
         iteration: 0,
+        end: false,
     })
 }
