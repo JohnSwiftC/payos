@@ -36,7 +36,7 @@ impl Interupt for Wheel {
         let name = self.names[index].clone();
 
         let name = if self.end {
-            name.fg(style::SUCCESS)
+            name.fg(style::SUCCESS).bold()
         } else {
             name.fg(style::ALERT)
         };

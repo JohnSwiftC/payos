@@ -11,6 +11,7 @@ pub fn init_db() -> Store {
     conn.execute(
         "
         CREATE TABLE IF NOT EXISTS people (name TEXT);
+        CREATE TABLE IF NOT EXISTS descs (name TEXT, desc TEXT);
     ",
     )
     .unwrap();
@@ -35,5 +36,20 @@ impl Store {
         let mut statement = self.conn.prepare("INSERT INTO people VALUES (?)").unwrap();
         statement.bind((1, name)).unwrap();
         let _ = statement.next();
+    }
+
+    pub fn get_wheel_desc(&self) -> String {
+        let mut statement = self
+            .conn
+            .prepare("SELECT * FROM desc WHERE name = wheel")
+            .unwrap();
+
+        if let Ok(State::Row) = statement.next() {
+            return statement
+                .read::<String, _>("desc")
+                .unwrap_or("Error reading desc".into());
+        }
+
+        "No desc provided".into()
     }
 }
