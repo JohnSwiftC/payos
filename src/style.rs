@@ -68,8 +68,8 @@ pub fn chassis_block() -> Block<'static> {
     .centered();
 
     let hint = Line::from(vec![
-        "━┥ exit page ".fg(BORDER),
-        "<*>".fg(HINT_KEY).bold(),
+        "━┥ ".fg(BORDER),
+        "exit page <*>".fg(HINT_KEY).bold(),
         " ┝━".fg(BORDER),
     ])
     .centered();
