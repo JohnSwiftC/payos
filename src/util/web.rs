@@ -1,6 +1,7 @@
 use crate::App;
 use crate::Interupt;
 use crate::style;
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::style::Stylize;
 use ratatui::text::Line;
 use ratatui::widgets::Widget;
@@ -9,7 +10,9 @@ use ratatui::{
     layout::{Constraint, Layout, Rect},
 };
 
+use std::os::unix::process::CommandExt;
 use std::process;
+use std::time::Duration;
 
 use local_ip_address;
 
@@ -64,14 +67,41 @@ impl Interupt for Web {
         cmd.args(["run", ".", db_path.to_str().unwrap()])
             .current_dir(&web_dir)
             .stderr(process::Stdio::null())
-            .stdout(process::Stdio::null());
+            .stdout(process::Stdio::null())
+            .process_group(0);
 
-        let status = cmd
-            .status()
+        let mut child = cmd
+            .spawn()
             .unwrap_or_else(|e| panic!("spawn failed (cmd = {cmd:?}): {e}"));
 
-        if !status.success() {
-            eprintln!("go exited: {status}");
+        let pgid = child.id();
+
+        loop {
+            // Did the server exit on its own (killed externally)?
+            match child.try_wait() {
+                Ok(Some(status)) => {
+                    if !status.success() {
+                        eprintln!("go exited: {status}");
+                    }
+                    break;
+                }
+                Ok(None) => {} // still running
+                Err(e) => panic!("failed to wait on go process: {e}"),
+            }
+
+            if event::poll(Duration::from_millis(100)).unwrap_or(false)
+                && let Ok(Event::Key(KeyEvent {
+                    code: KeyCode::Char('*'),
+                    kind: KeyEventKind::Press,
+                    ..
+                })) = event::read()
+            {
+                let _ = process::Command::new("kill")
+                    .args(["-TERM", &format!("-{pgid}")])
+                    .status();
+                let _ = child.wait();
+                break;
+            }
         }
     }
 }
