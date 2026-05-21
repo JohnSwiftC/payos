@@ -26,6 +26,12 @@ func main() {
 	db.Exec("CREATE TABLE IF NOT EXISTS people (name TEXT)")
 	db.Exec("CREATE TABLE IF NOT EXISTS descs (name TEXT, desc TEXT)")
 
+	// Fixed keys: seed the slots the app reads so users never pick keys,
+	// they only edit values. Idempotent.
+	db.Exec(`INSERT INTO descs (name, desc)
+		SELECT 'wheel', 'Spin the Wheel'
+		WHERE NOT EXISTS (SELECT 1 FROM descs WHERE name = 'wheel')`)
+
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*")
 
@@ -106,28 +112,11 @@ func main() {
 		c.HTML(http.StatusOK, "text.html", gin.H{"entries": entries})
 	})
 
-	r.POST("/text/add", func(c *gin.Context) {
-		name := c.PostForm("name")
-		value := c.PostForm("value")
-		if name != "" {
-			db.Exec("INSERT INTO descs (name, desc) VALUES (?, ?)", name, value)
-		}
-		c.Redirect(http.StatusFound, "/text")
-	})
-
+	// Keys are fixed and seeded at init, so only the value is editable.
 	r.POST("/text/edit/:id", func(c *gin.Context) {
 		id := c.Param("id")
-		name := c.PostForm("name")
 		value := c.PostForm("value")
-		if name != "" {
-			db.Exec("UPDATE descs SET name = ?, desc = ? WHERE rowid = ?", name, value, id)
-		}
-		c.Redirect(http.StatusFound, "/text")
-	})
-
-	r.POST("/text/delete/:id", func(c *gin.Context) {
-		id := c.Param("id")
-		db.Exec("DELETE FROM descs WHERE rowid = ?", id)
+		db.Exec("UPDATE descs SET desc = ? WHERE rowid = ?", value, id)
 		c.Redirect(http.StatusFound, "/text")
 	})
 

@@ -12,6 +12,9 @@ pub fn init_db() -> Store {
         "
         CREATE TABLE IF NOT EXISTS people (name TEXT);
         CREATE TABLE IF NOT EXISTS descs (name TEXT, desc TEXT);
+        INSERT INTO descs (name, desc)
+            SELECT 'wheel', 'Spin the Wheel'
+            WHERE NOT EXISTS (SELECT 1 FROM descs WHERE name = 'wheel');
     ",
     )
     .unwrap();

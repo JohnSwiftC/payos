@@ -12,22 +12,14 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { text-align: left; padding: 0.75rem; border-bottom: 1px solid #eee; vertical-align: top; }
         th { font-weight: 600; color: #666; }
-        form.inline { display: inline; }
-        input[type="text"], textarea { padding: 0.5rem 0.75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; font-family: inherit; width: 100%; }
-        textarea { min-height: 2.5rem; resize: vertical; }
+        textarea { padding: 0.5rem 0.75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; font-family: inherit; width: 100%; min-height: 6rem; resize: vertical; line-height: 1.5; }
         button, .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-add { background: #2563eb; color: #fff; }
-        .btn-add:hover { background: #1d4ed8; }
         .btn-save { background: #16a34a; color: #fff; }
         .btn-save:hover { background: #15803d; }
-        .btn-delete { background: #ef4444; color: #fff; }
-        .btn-delete:hover { background: #dc2626; }
-        .btn-cancel { background: #6b7280; color: #fff; }
-        .btn-cancel:hover { background: #4b5563; }
-        .actions { display: flex; gap: 0.5rem; }
-        .row-form { display: flex; gap: 0.5rem; align-items: flex-start; }
-        .row-form .key { flex: 0 0 180px; }
-        .row-form .val { flex: 1; }
+        .entry { display: flex; flex-direction: column; gap: 0.5rem; }
+        .entry + .entry { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee; }
+        .entry .key { font-weight: 600; color: #666; font-family: ui-monospace, monospace; }
+        .entry .btn-save { align-self: flex-start; }
         .empty { color: #999; padding: 1rem 0; }
         .nav { margin-bottom: 1.5rem; }
         .nav a { color: #2563eb; text-decoration: none; }
@@ -38,46 +30,16 @@
     <h1>Dynamic Text</h1>
 
     <div class="card">
-        <form action="/text/add" method="POST" class="row-form">
-            <input type="text" name="name" class="key" placeholder="Key (e.g. wheel)" required>
-            <textarea name="value" class="val" placeholder="Value"></textarea>
-            <button type="submit" class="btn btn-add">Add</button>
-        </form>
-    </div>
-
-    <div class="card">
         {{ if .entries }}
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 200px;">Key</th>
-                    <th>Value</th>
-                    <th style="width: 200px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ range .entries }}
-                <tr>
-                    <td colspan="3">
-                        <form action="/text/edit/{{ .ID }}" method="POST" class="row-form">
-                            <input type="text" name="name" class="key" value="{{ .Name }}" required>
-                            <textarea name="value" class="val">{{ .Value }}</textarea>
-                            <button type="submit" class="btn btn-save">Save</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="border-bottom: 2px solid #eee;">
-                        <form action="/text/delete/{{ .ID }}" method="POST" class="inline">
-                            <button type="submit" class="btn btn-delete" onclick="return confirm('Delete this entry?')">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
+        {{ range .entries }}
+        <form action="/text/edit/{{ .ID }}" method="POST" class="entry">
+            <label class="key">{{ .Name }}</label>
+            <textarea name="value" rows="4">{{ .Value }}</textarea>
+            <button type="submit" class="btn btn-save">Save</button>
+        </form>
+        {{ end }}
         {{ else }}
-        <p class="empty">No dynamic text yet. Add a key/value above.</p>
+        <p class="empty">No values yet.</p>
         {{ end }}
     </div>
 </body>
