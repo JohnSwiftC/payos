@@ -62,6 +62,13 @@ pub fn callback(state: PageState, app: &mut App, event: InputEvent) -> Option<Pa
                 return Some(PageSignal::Push(people::page()));
             }
 
+            2 => {
+                let _ = crate::util::browser::open("https://instagram.com")
+                    .unwrap()
+                    .wait()
+                    .unwrap();
+            }
+
             _ => return None,
         },
 
