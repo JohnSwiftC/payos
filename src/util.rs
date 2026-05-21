@@ -1,3 +1,4 @@
+pub mod browser;
 pub mod saved;
 pub mod web;
 
