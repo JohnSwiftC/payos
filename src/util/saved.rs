@@ -49,9 +49,15 @@ impl Store {
         statement.bind((1, "wheel")).unwrap();
 
         if let Ok(State::Row) = statement.next() {
-            return statement
+            let desc = statement
                 .read::<String, _>("desc")
                 .unwrap_or("Error reading desc".into());
+
+            if desc.is_empty() {
+                return "Spin the Wheel".into();
+            } else {
+                return desc;
+            }
         }
 
         "Spin the Wheel".into()
