@@ -35,6 +35,7 @@ impl Store {
         res
     }
 
+    #[allow(dead_code)]
     pub fn add_person(&self, name: &str) {
         let mut statement = self.conn.prepare("INSERT INTO people VALUES (?)").unwrap();
         statement.bind((1, name)).unwrap();

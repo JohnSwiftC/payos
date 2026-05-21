@@ -9,7 +9,6 @@ use ratatui::{buffer::Buffer, layout::Rect};
 use crate::App;
 use crate::Interupt;
 use crate::style;
-use crate::util::saved;
 use ratatui::style::Stylize;
 use ratatui::widgets::Widget;
 
