@@ -1,6 +1,7 @@
 use ratatui::{buffer::Buffer, layout::Rect};
 
 use crate::input::InputEvent;
+use crate::popup::generic;
 use crate::{App, people};
 use crate::{Page, PageSignal, PageState};
 
@@ -63,10 +64,14 @@ pub fn callback(state: PageState, app: &mut App, event: InputEvent) -> Option<Pa
             }
 
             2 => {
-                let _ = crate::util::browser::open("https://instagram.com")
-                    .unwrap()
-                    .wait()
-                    .unwrap();
+                let inter = generic::with_message("Opening browser...".into(), |_: &mut App| {
+                    let _ = crate::util::browser::open("https://instagram.com")
+                        .unwrap()
+                        .wait()
+                        .unwrap();
+                });
+
+                return Some(PageSignal::Interupt(inter));
             }
 
             _ => return None,
