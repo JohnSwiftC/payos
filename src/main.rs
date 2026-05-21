@@ -17,7 +17,6 @@ use ratatui::{
 };
 use ratatui_image::{picker::Picker, protocol::StatefulProtocol};
 use std::io;
-use std::process;
 
 use std::any::Any;
 use std::cell::{RefCell, RefMut};
@@ -199,7 +198,7 @@ impl App {
         }) = event
         {
             if self.stack.is_empty() {
-                process::exit(0);
+                panic!("Left last page...");
             } else {
                 _ = self.stack.pop();
 
