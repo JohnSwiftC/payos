@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::time::Duration;
 
 use ratatui::layout::Constraint;
@@ -60,6 +61,16 @@ impl Interupt for Wheel {
             name.fg(style::ALERT)
         };
 
+        let line = if self.end {
+            vec![
+                "▌ ".fg(style::SUCCESS).bold(),
+                name,
+                " ▐".fg(style::SUCCESS).bold(),
+            ]
+        } else {
+            build_wheel_spinner(&self.names, index, bottom_bar_w)
+        };
+
         Line::from(vec![
             bar.clone().fg(style::ALERT),
             " ".bold(),
@@ -70,13 +81,7 @@ impl Interupt for Wheel {
         .centered()
         .render(layout[1], buf);
 
-        Line::from(vec![
-            "▌ ".fg(style::SUCCESS).bold(),
-            name,
-            " ▐".fg(style::SUCCESS).bold(),
-        ])
-        .centered()
-        .render(layout[3], buf);
+        Line::from(line).centered().render(layout[3], buf);
 
         Line::from(bottom_bar.fg(style::ALERT))
             .centered()
@@ -110,6 +115,63 @@ impl Interupt for Wheel {
             ));
         }
     }
+}
+
+fn build_wheel_spinner(names: &[String], index: usize, width: usize) -> Vec<Span<'_>> {
+    let max_index = names.len() - 1;
+    let center = names[index].clone();
+
+    let side_budget = width.saturating_sub(center.len() + 5) / 2;
+
+    let mut left_spans: VecDeque<Span> = VecDeque::new();
+    let mut right_spans: Vec<Span> = Vec::new();
+    let mut left_width = 0usize;
+    let mut right_width = 0usize;
+    let mut left = index;
+    let mut right = index;
+    let mut left_done = false;
+    let mut right_done = false;
+
+    while !(left_done && right_done) {
+        if !left_done {
+            let i = if left == 0 { max_index } else { left - 1 };
+            let add = names[i].len() + 1;
+            if left_width + add <= side_budget {
+                left = i;
+                left_spans.push_front(names[i].clone().fg(style::CREAM));
+                left_spans.push_front(" ".into());
+                left_width += add;
+            } else {
+                left_done = true;
+            }
+        }
+
+        if !right_done {
+            let i = if right == max_index { 0 } else { right + 1 };
+            let add = names[i].len() + 1;
+            if right_width + add <= side_budget {
+                right = i;
+                right_spans.push(" ".into());
+                right_spans.push(names[i].clone().fg(style::CREAM));
+                right_width += add;
+            } else {
+                right_done = true;
+            }
+        }
+    }
+
+    if left_width < right_width {
+        left_spans.push_front(" ".repeat(right_width - left_width).into());
+    } else if right_width < left_width {
+        right_spans.push(" ".repeat(left_width - right_width).into());
+    }
+
+    let mut result: Vec<Span> = left_spans.into();
+    result.push(" ▌ ".fg(style::SUCCESS).bold());
+    result.push(center.fg(style::ALERT));
+    result.push(" ▐".fg(style::SUCCESS).bold());
+    result.extend(right_spans);
+    result
 }
 
 fn no_names_error(area: Rect, buf: &mut Buffer) {
