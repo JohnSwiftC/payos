@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::path::Path;
+
 use ratatui::style::Stylize;
 use ratatui::{buffer::Buffer, layout::Rect};
 
@@ -10,6 +13,19 @@ use ratatui::text::Line;
 use ratatui::widgets::Widget;
 
 use crate::style;
+
+pub(crate) struct Sound {
+    name: String,
+    file: File,
+}
+
+impl Sound {
+    pub(crate) fn from_file<F: AsRef<Path>>(name: String, path: F) -> std::io::Result<Self> {
+        let file = File::open(path)?;
+
+        Ok(Self { name, file })
+    }
+}
 
 struct Sounds;
 

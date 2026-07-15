@@ -25,6 +25,7 @@ use std::rc::Rc;
 use crate::widgets::grid::Grid;
 use crate::widgets::{quote, richbutton};
 
+use crate::funmenu::sounds::Sound;
 use crate::util::saved;
 
 use input::InputEvent;
@@ -84,6 +85,8 @@ pub struct App {
     picker: Picker,
     image_protocol: StatefulProtocol,
     interupt: Option<Box<dyn Interupt>>,
+
+    sounds: Vec<Sound>,
 }
 
 impl App {
@@ -109,6 +112,8 @@ impl App {
         //store.add_person("John");
         //store.add_person("Bill");
 
+        let sounds = Vec::new();
+
         Self {
             stack: Vec::new(),
             interupt: None,
@@ -126,6 +131,7 @@ impl App {
             sunrise_image,
             picker,
             image_protocol,
+            sounds,
         }
     }
 
