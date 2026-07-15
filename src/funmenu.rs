@@ -8,6 +8,7 @@ use crate::{Page, PageSignal, PageState};
 use crate::widgets::grid;
 use crate::widgets::richbutton;
 
+mod sounds;
 mod wheel;
 
 struct FunmenuState {
