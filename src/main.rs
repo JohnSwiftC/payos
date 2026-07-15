@@ -112,7 +112,7 @@ impl App {
         //store.add_person("John");
         //store.add_person("Bill");
 
-        let sounds = Vec::new();
+        let sounds = vec![Sound::from_file("Meow", "meow.mp3").expect("failed to open meow.mp3")];
 
         Self {
             stack: Vec::new(),

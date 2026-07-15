@@ -37,7 +37,7 @@ pub fn render(state: PageState, _app: &mut App, area: Rect, buf: &mut Buffer) {
 
     let buttons = vec![
         richbutton::action_button("Spin the Wheel", "Just like CS:GO"),
-        richbutton::action_button("Game 2", "Insert game 2 lol"),
+        richbutton::action_button("Sounds", "Play a random sound"),
         richbutton::action_button("Reels", "Stimmax"),
     ];
 
