@@ -35,7 +35,7 @@ impl Interupt for Sounds {
         .render(layout[1], buf);
 
         // sound name at some point
-        let sound_name: String;
+        let sound_name = String::from("placeholder");
 
         Line::from(vec![
             "Currently playing: ".fg(style::TEXT_DIM),
