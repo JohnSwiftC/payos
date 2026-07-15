@@ -2,7 +2,7 @@ use ratatui::style::Stylize;
 use ratatui::{buffer::Buffer, layout::Rect};
 
 use crate::input::InputEvent;
-use crate::{App, people};
+use crate::{App, Interupt, people};
 use crate::{Page, PageSignal, PageState};
 
 use ratatui::layout::{Constraint, Layout};
@@ -11,33 +11,44 @@ use ratatui::widgets::Widget;
 
 use crate::style;
 
-pub fn render(state: PageState, app: &mut App, area: Rect, buf: &mut Buffer) {
-    let layout = Layout::vertical([
-        Constraint::Min(0),
-        Constraint::Length(1),
-        Constraint::Length(1),
-        Constraint::Length(1),
-        Constraint::Length(1),
-        Constraint::Length(1),
-        Constraint::Min(0),
-    ])
-    .split(area);
+struct Sounds;
 
-    Line::from("Hit any button for a random sound".fg(style::TEXT))
+impl Interupt for Sounds {
+    fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer) {
+        let layout = Layout::vertical([
+            Constraint::Min(0),
+            Constraint::Length(1), // header
+            Constraint::Length(1), // gap
+            Constraint::Length(1), // url
+            Constraint::Length(1), // gap
+            Constraint::Length(1), // status
+            Constraint::Min(0),
+        ])
+        .split(area);
+
+        Line::from(vec![
+            "━┥ ".fg(style::BORDER),
+            "CONFIG SERVER ONLINE".fg(style::INFO).bold(),
+            " ┝━".fg(style::BORDER),
+        ])
+        .centered()
+        .render(layout[1], buf);
+
+        // sound name at some point
+        let sound_name: String;
+
+        Line::from(vec![
+            "Currently playing: ".fg(style::TEXT_DIM),
+            sound_name.fg(style::TEXT),
+            "...".fg(style::TEXT_DIM),
+        ])
         .centered()
         .render(layout[3], buf);
-}
-
-pub fn event_callback(_state: PageState, _app: &mut App, _event: InputEvent) -> Option<PageSignal> {
-    // play some sound here lol
-    None
-}
-
-pub fn page() -> Page {
-    Page {
-        state: PageState::new(()),
-        render,
-        event_callback,
-        on_load: None,
     }
+
+    fn callback(&mut self, app: &mut App) {}
+}
+
+pub fn interupt() -> Box<Sounds> {
+    Box::new(Sounds)
 }
