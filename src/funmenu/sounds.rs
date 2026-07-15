@@ -2,12 +2,8 @@ use ratatui::style::Stylize;
 use ratatui::{buffer::Buffer, layout::Rect};
 
 use crate::input::InputEvent;
-use crate::popup::generic;
 use crate::{App, people};
 use crate::{Page, PageSignal, PageState};
-
-use crate::widgets::grid;
-use crate::widgets::richbutton;
 
 use ratatui::layout::{Constraint, Layout};
 use ratatui::text::Line;
@@ -15,11 +11,7 @@ use ratatui::widgets::Widget;
 
 use crate::style;
 
-struct SoundsState;
-
 pub fn render(state: PageState, app: &mut App, area: Rect, buf: &mut Buffer) {
-    let state = state.access::<SoundsState>();
-
     let layout = Layout::vertical([
         Constraint::Min(0),
         Constraint::Length(1),
@@ -37,5 +29,15 @@ pub fn render(state: PageState, app: &mut App, area: Rect, buf: &mut Buffer) {
 }
 
 pub fn event_callback(_state: PageState, _app: &mut App, _event: InputEvent) -> Option<PageSignal> {
+    // play some sound here lol
     None
+}
+
+pub fn page() -> Page {
+    Page {
+        state: PageState::new(()),
+        render,
+        event_callback,
+        on_load: None,
+    }
 }
