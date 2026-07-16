@@ -30,6 +30,8 @@ use crate::util::saved;
 
 use input::InputEvent;
 
+use rodio::{Decoder, MixerDeviceSink, source::Source};
+
 #[derive(Clone)]
 pub struct PageState(Rc<RefCell<Box<dyn Any>>>);
 
@@ -87,6 +89,7 @@ pub struct App {
     interupt: Option<Box<dyn Interupt>>,
 
     sounds: Vec<Sound>,
+    mixer_device_sink: MixerDeviceSink,
 }
 
 impl App {
@@ -132,6 +135,8 @@ impl App {
             picker,
             image_protocol,
             sounds,
+            mixer_device_sink: rodio::DeviceSinkBuilder::open_default_sink()
+                .expect("failed to open default audio sink"),
         }
     }
 

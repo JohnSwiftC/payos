@@ -37,18 +37,18 @@ impl<'a> Interupt for Sounds<'a> {
     fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer) {
         let layout = Layout::vertical([
             Constraint::Min(0),
-            Constraint::Length(1), // header
-            Constraint::Length(1), // gap
-            Constraint::Length(1), // url
-            Constraint::Length(1), // gap
-            Constraint::Length(1), // status
+            Constraint::Length(1),
+            Constraint::Length(1),
+            Constraint::Length(1),
+            Constraint::Length(1),
+            Constraint::Length(1),
             Constraint::Min(0),
         ])
         .split(area);
 
         Line::from(vec![
             "━┥ ".fg(style::BORDER),
-            "CONFIG SERVER ONLINE".fg(style::INFO).bold(),
+            "PLAYBACK".fg(style::INFO).bold(),
             " ┝━".fg(style::BORDER),
         ])
         .centered()
