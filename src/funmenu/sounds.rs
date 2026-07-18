@@ -18,22 +18,20 @@ use crate::style;
 
 pub(crate) struct Sound {
     name: &'static str,
-    file: File,
+    file_path: &'static str,
 }
 
 impl Sound {
-    pub(crate) fn from_file<F: AsRef<Path>>(name: &'static str, path: F) -> std::io::Result<Self> {
-        let file = File::open(path)?;
-
-        Ok(Self { name, file })
+    pub(crate) fn new(name: &'static str, file_path: &'static str) -> Self {
+        Self { name, file_path }
     }
 }
 
-pub struct Sounds<'a> {
-    source: &'a Sound,
+pub struct Sounds {
+    source: &'static Sound,
 }
 
-impl<'a> Interupt for Sounds<'a> {
+impl Interupt for Sounds {
     fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer) {
         let layout = Layout::vertical([
             Constraint::Min(0),
@@ -63,9 +61,17 @@ impl<'a> Interupt for Sounds<'a> {
         .render(layout[3], buf);
     }
 
-    fn callback(&mut self, app: &mut App) {}
+    fn callback(&mut self, app: &mut App) {
+        let audio_file = File::open(self.source.file_path).expect("failed to open audio file");
+        let source = Decoder::try_from(audio_file).unwrap();
+        let player = rodio::Player::connect_new(app.mixer_device_sink.mixer());
+
+        player.append(source);
+
+        player.sleep_until_end();
+    }
 }
 
-pub fn interupt(source: &Sound) -> Box<Sounds<'_>> {
+pub fn interupt(source: &'static Sound) -> Box<Sounds> {
     Box::new(Sounds { source })
 }

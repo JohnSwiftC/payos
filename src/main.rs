@@ -30,7 +30,7 @@ use crate::util::saved;
 
 use input::InputEvent;
 
-use rodio::{Decoder, MixerDeviceSink, source::Source};
+use rodio::{Decoder, MixerDeviceSink, Player, source::Source};
 
 #[derive(Clone)]
 pub struct PageState(Rc<RefCell<Box<dyn Any>>>);
@@ -88,7 +88,7 @@ pub struct App {
     image_protocol: StatefulProtocol,
     interupt: Option<Box<dyn Interupt>>,
 
-    sounds: Vec<Sound>,
+    sounds: &'static [Sound],
     mixer_device_sink: MixerDeviceSink,
 }
 
@@ -115,7 +115,7 @@ impl App {
         //store.add_person("John");
         //store.add_person("Bill");
 
-        let sounds = vec![Sound::from_file("Meow", "meow.mp3").expect("failed to open meow.mp3")];
+        let sounds = vec![Sound::new("Meow", "meow.mp3")];
 
         Self {
             stack: Vec::new(),
@@ -134,7 +134,7 @@ impl App {
             sunrise_image,
             picker,
             image_protocol,
-            sounds,
+            sounds: Vec::leak(sounds),
             mixer_device_sink: rodio::DeviceSinkBuilder::open_default_sink()
                 .expect("failed to open default audio sink"),
         }

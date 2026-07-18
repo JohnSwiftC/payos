@@ -61,7 +61,7 @@ pub fn callback(state: PageState, app: &mut App, event: InputEvent) -> Option<Pa
             }
 
             1 => {
-                return Some(PageSignal::Push(people::page()));
+                return Some(PageSignal::Interupt(sounds::interupt(&app.sounds[0])));
             }
 
             2 => {
