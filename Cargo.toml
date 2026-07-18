@@ -8,7 +8,10 @@ crossterm = "0.29.0"
 image = { version = "0.25.10", default-features = false, features = ["jpeg", "png"] }
 local-ip-address = "0.6.12"
 rand = "0.10.1"
-ratatui = { version = "0.30.0", features = ["unstable-widget-ref"] }
+# =0.30.0: ratatui-core 0.1.2 rewrote buffer diffing to skip cells by symbol
+# width, which drops ratatui-image's escape-payload cells (partial images).
+# Unpin when upgrading ratatui-image to >=11, which supports the new diff.
+ratatui = { version = "=0.30.0", features = ["unstable-widget-ref"] }
 ratatui-image = { version = "10.0.6", default-features = false, features = ["crossterm"] }
 rodio = "0.22.2"
 sqlite = "0.37.0"
