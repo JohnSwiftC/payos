@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::App;
 use crate::InputEvent;
 use crate::Page;

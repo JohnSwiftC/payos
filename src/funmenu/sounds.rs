@@ -1,18 +1,15 @@
 use std::fs::File;
-use std::path::Path;
 
 use ratatui::style::Stylize;
 use ratatui::{buffer::Buffer, layout::Rect};
 
-use crate::input::InputEvent;
-use crate::{App, Interupt, people};
-use crate::{Page, PageSignal, PageState};
+use crate::{App, Interupt};
 
 use ratatui::layout::{Constraint, Layout};
 use ratatui::text::Line;
 use ratatui::widgets::Widget;
 
-use rodio::{Decoder, MixerDeviceSink, source::Source};
+use rodio::Decoder;
 
 use crate::style;
 
@@ -32,7 +29,7 @@ pub struct Sounds {
 }
 
 impl Interupt for Sounds {
-    fn render(&mut self, app: &mut App, area: Rect, buf: &mut Buffer) {
+    fn render(&mut self, _app: &mut App, area: Rect, buf: &mut Buffer) {
         let layout = Layout::vertical([
             Constraint::Min(0),
             Constraint::Length(1),

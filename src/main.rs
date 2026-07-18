@@ -30,7 +30,7 @@ use crate::util::saved;
 
 use input::InputEvent;
 
-use rodio::{Decoder, MixerDeviceSink, Player, source::Source};
+use rodio::MixerDeviceSink;
 
 #[derive(Clone)]
 pub struct PageState(Rc<RefCell<Box<dyn Any>>>);

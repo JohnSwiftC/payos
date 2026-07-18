@@ -2,7 +2,7 @@ use ratatui::{buffer::Buffer, layout::Rect};
 
 use crate::input::InputEvent;
 use crate::popup::generic;
-use crate::{App, people};
+use crate::App;
 use crate::{Page, PageSignal, PageState};
 
 use crate::widgets::grid;
